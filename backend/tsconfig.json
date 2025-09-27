@@ -1,0 +1,58 @@
+{
+  "compilerOptions": {
+    /* ===== Language and Module System ===== */
+    "target": "ES2022", // Target modern Node.js runtimes (Node 20+)
+    "lib": ["ES2022"], // Use latest ES2022 standard libraries
+    "module": "NodeNext", // Use Node.js native ESM
+    "moduleResolution": "NodeNext", // Required for NodeNext module system
+
+    /* ===== Module Interop ===== */
+    "allowSyntheticDefaultImports": true, // Support synthetic default imports
+    "esModuleInterop": true, // Interop between CommonJS & ESM
+    "resolveJsonModule": true, // Allow importing JSON files
+    "isolatedModules": true, // Required for modern ESM
+
+    /* ===== Strictness & Safety ===== */
+    "strict": true, // Enable all strict type-checking options
+    "noUnusedLocals": true, // Error on unused variables
+    "noUnusedParameters": true, // Error on unused function parameters
+    "exactOptionalPropertyTypes": true, // Enforce exact optional types
+    "noImplicitReturns": true, // Require explicit return in all code paths
+    "noFallthroughCasesInSwitch": true, // Prevent accidental fallthrough in switch
+    "noUncheckedIndexedAccess": true, // Make array indexing safe (adds `| undefined`)
+
+    /* ===== Output & Build ===== */
+    "rootDir": "./", // Root of source code
+    "outDir": "./dist", // Output directory for compiled files
+    "declaration": true, // Generate type declaration files (.d.ts)
+    "declarationMap": true, // Source maps for declarations (useful for libraries)
+    "sourceMap": true, // Generate .map files for debugging
+    "removeComments": true, // Strip comments in build
+    "incremental": true, // Speeds up rebuilds
+    "tsBuildInfoFile": "./dist/.tsbuildinfo", // Cache file for incremental builds
+
+    /* ===== Linting & Code Consistency ===== */
+    "forceConsistentCasingInFileNames": true, // Avoid case mismatches
+    "skipLibCheck": true, // Skip checking type definitions for speed
+
+    /* ===== Type Roots ===== */
+    "typeRoots": ["./node_modules/@types", "./src/types"]
+  },
+
+  /* ===== Included Files ===== */
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.js",
+    "server.ts",
+    "server.js",
+    "drizzle.config.ts"
+  ],
+
+  /* ===== Excluded Files ===== */
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+
+  /* ===== ts-node Settings (for Development Only) ===== */
+  "ts-node": {
+    "esm": true
+  }
+}

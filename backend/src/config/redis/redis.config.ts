@@ -1,0 +1,14 @@
+export const redisConfig = {
+  host: process.env.REDIS_HOST || 'redis',
+  port: Number(process.env.REDIS_PORT) || 6379,
+  db: Number(process.env.REDIS_DB) || 0,
+  lazyConnect: true,
+  keepAlive: 30000,
+  family: 4,
+  keyPrefix: process.env.REDIS_KEY_PREFIX || 'app:',
+  retryDelayOnFailover: 100,
+  maxRetriesPerRequest: 3,
+  maxLoadingTimeout: 10000,
+  connectTimeout: 10000,
+  commandTimeout: 5000,
+};

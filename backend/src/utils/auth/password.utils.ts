@@ -1,0 +1,25 @@
+import bcrypt from 'bcrypt';
+import { logger } from '../logger.js';
+
+export const hashPassword = async (password: string): Promise<string> => {
+  try {
+    const saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS || 12);
+    const salt = await bcrypt.genSalt(saltRounds);
+    return await bcrypt.hash(password, salt);
+  } catch (error) {
+    logger.error('Password hashing failed:', error);
+    throw new Error('Failed to hash password');
+  }
+};
+
+export const comparePassword = async (
+  password: string,
+  hashedPassword: string
+): Promise<boolean> => {
+  try {
+    return await bcrypt.compare(password, hashedPassword);
+  } catch (error) {
+    logger.error('Password comparison failed:', error);
+    throw new Error('Failed to compare password');
+  }
+};
