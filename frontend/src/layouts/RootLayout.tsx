@@ -2,6 +2,7 @@ import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import { Outlet } from 'react-router-dom';
 import LayoutAnimation from '@/components/animations/LayoutAnimation';
+import { Separator } from '@/components/ui/separator';
 
 export default function PublicLayout() {
   return (
@@ -18,9 +19,8 @@ export default function PublicLayout() {
         </main>
       </LayoutAnimation>
 
-      <footer className='mt-auto'>
-        <Footer />
-      </footer>
+      <Separator className='my-4' />
+      <Footer />
     </div>
   );
 }

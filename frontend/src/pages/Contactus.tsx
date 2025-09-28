@@ -10,6 +10,7 @@ export default function ContactUs() {
     phone: '',
     message: '',
   });
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -25,7 +26,7 @@ export default function ContactUs() {
   };
 
   return (
-    <div className='bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-24 px-4 w-full'>
+    <div className='bg-gradient-to-br from-background to-muted/50 py-24 px-4 w-full min-h-screen'>
       <div className='mx-auto max-w-4xl'>
         <div className='text-center mb-16'>
           <div className='inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4'>
@@ -43,23 +44,23 @@ export default function ContactUs() {
               />
             </svg>
           </div>
-          <h1 className='text-5xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-6xl mb-4'>
+          <h1 className='text-5xl font-bold tracking-tight text-foreground sm:text-6xl mb-4'>
             Get in <span className='text-primary'>Touch</span>
           </h1>
-          <p className='text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed'>
+          <p className='text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed'>
             We'd love to hear from you. Send us a message and we'll respond as
             soon as possible.
           </p>
         </div>
 
-        <div className='bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden'>
+        <div className='bg-card rounded-2xl shadow-xl border border-border overflow-hidden'>
           <div className='p-8 sm:p-12'>
             <div className='space-y-8'>
               <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
                 <div className='group'>
                   <label
                     htmlFor='firstName'
-                    className='block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2'
+                    className='block text-sm font-semibold text-foreground mb-2'
                   >
                     First Name
                   </label>
@@ -69,14 +70,14 @@ export default function ContactUs() {
                     type='text'
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    className='block w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-slate-400 dark:hover:border-slate-500'
+                    className='block w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground placeholder-muted-foreground shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-primary/50'
                     placeholder='Enter your first name'
                   />
                 </div>
                 <div className='group'>
                   <label
                     htmlFor='lastName'
-                    className='block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2'
+                    className='block text-sm font-semibold text-foreground mb-2'
                   >
                     Last Name
                   </label>
@@ -86,7 +87,7 @@ export default function ContactUs() {
                     type='text'
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className='block w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-slate-400 dark:hover:border-slate-500'
+                    className='block w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground placeholder-muted-foreground shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-primary/50'
                     placeholder='Enter your last name'
                   />
                 </div>
@@ -95,7 +96,7 @@ export default function ContactUs() {
               <div className='group'>
                 <label
                   htmlFor='company'
-                  className='block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2'
+                  className='block text-sm font-semibold text-foreground mb-2'
                 >
                   Company
                 </label>
@@ -105,7 +106,7 @@ export default function ContactUs() {
                   type='text'
                   value={formData.company}
                   onChange={handleInputChange}
-                  className='block w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-slate-400 dark:hover:border-slate-500'
+                  className='block w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground placeholder-muted-foreground shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-primary/50'
                   placeholder='Your company name'
                 />
               </div>
@@ -114,7 +115,7 @@ export default function ContactUs() {
                 <div className='group'>
                   <label
                     htmlFor='email'
-                    className='block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2'
+                    className='block text-sm font-semibold text-foreground mb-2'
                   >
                     Email Address
                   </label>
@@ -124,7 +125,7 @@ export default function ContactUs() {
                     type='email'
                     value={formData.email}
                     onChange={handleInputChange}
-                    className='block w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-slate-400 dark:hover:border-slate-500'
+                    className='block w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground placeholder-muted-foreground shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-primary/50'
                     placeholder='your@email.com'
                     required
                   />
@@ -132,7 +133,7 @@ export default function ContactUs() {
                 <div className='group'>
                   <label
                     htmlFor='phone'
-                    className='block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2'
+                    className='block text-sm font-semibold text-foreground mb-2'
                   >
                     Phone Number
                   </label>
@@ -142,7 +143,7 @@ export default function ContactUs() {
                     type='tel'
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className='block w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-slate-400 dark:hover:border-slate-500'
+                    className='block w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground placeholder-muted-foreground shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-primary/50'
                     placeholder='+91 123 456 7890'
                   />
                 </div>
@@ -151,7 +152,7 @@ export default function ContactUs() {
               <div className='group'>
                 <label
                   htmlFor='message'
-                  className='block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2'
+                  className='block text-sm font-semibold text-foreground mb-2'
                 >
                   Message
                 </label>
@@ -161,26 +162,26 @@ export default function ContactUs() {
                   rows={5}
                   value={formData.message}
                   onChange={handleInputChange}
-                  className='block w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-slate-400 dark:hover:border-slate-500 resize-none'
+                  className='block w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground placeholder-muted-foreground shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-primary/50 resize-none'
                   placeholder='Tell us about your project or question...'
                   required
                 />
               </div>
 
               <div className='flex items-start space-x-3'>
-                <div className='relative'>
+                <div className='relative flex-shrink-0'>
                   <input
                     id='agree-to-policies'
                     name='agree-to-policies'
                     type='checkbox'
                     checked={isChecked}
                     onChange={e => setIsChecked(e.target.checked)}
-                    className='peer h-5 w-5 rounded border-2 border-slate-300 dark:border-slate-600 text-primary focus:ring-4 focus:ring-primary/20 focus:ring-offset-0 transition-all duration-200 cursor-pointer'
+                    className='peer h-5 w-5 rounded border-2 border-input text-primary focus:ring-4 focus:ring-primary/20 focus:ring-offset-0 transition-all duration-200 cursor-pointer bg-background'
                     required
                   />
-                  <div className='pointer-events-none absolute inset-0 rounded border-2 border-transparent bg-gradient-to-br from-primary to-blue-600 opacity-0 transition-opacity duration-200 peer-checked:opacity-100'>
+                  <div className='pointer-events-none absolute inset-0 rounded border-2 border-transparent bg-primary opacity-0 transition-opacity duration-200 peer-checked:opacity-100'>
                     <svg
-                      className='h-full w-full p-0.5 text-white'
+                      className='h-full w-full p-0.5 text-primary-foreground'
                       fill='currentColor'
                       viewBox='0 0 20 20'
                     >
@@ -194,7 +195,7 @@ export default function ContactUs() {
                 </div>
                 <label
                   htmlFor='agree-to-policies'
-                  className='text-sm text-slate-600 dark:text-slate-300 leading-5 cursor-pointer'
+                  className='text-sm text-muted-foreground leading-5 cursor-pointer'
                 >
                   I agree to the{' '}
                   <a
@@ -218,7 +219,7 @@ export default function ContactUs() {
                   type='button'
                   onClick={handleSubmit}
                   disabled={!isChecked}
-                  className='group relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-primary to-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-primary/25 focus:outline-none focus:ring-4 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg'
+                  className='group relative w-full overflow-hidden rounded-xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-primary/25 focus:outline-none focus:ring-4 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg hover:bg-primary/90'
                 >
                   <span className='relative z-10 flex items-center justify-center space-x-2'>
                     <span>Send Message</span>
@@ -228,9 +229,9 @@ export default function ContactUs() {
             </div>
           </div>
 
-          <div className='bg-slate-50 dark:bg-slate-700/50 px-8 py-6 sm:px-12'>
+          <div className='bg-muted/50 px-8 py-6 sm:px-12 border-t border-border'>
             <div className='flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0'>
-              <div className='flex items-center space-x-4 text-sm text-slate-600 dark:text-slate-400'>
+              <div className='flex items-center space-x-4 text-sm text-muted-foreground'>
                 <div className='flex items-center space-x-2'>
                   <svg
                     className='w-4 h-4'
