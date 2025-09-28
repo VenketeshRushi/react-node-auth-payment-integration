@@ -97,6 +97,24 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
 }
 
 :root {
@@ -523,7 +541,7 @@
     @apply opacity-60 md:opacity-100;
   }
 
-  /* Custom scrollbar styling. Thanks @pranathiperii. */
+  /* Custom scrollbar styling */
   ::-webkit-scrollbar {
     width: 5px;
   }
@@ -531,12 +549,46 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
+    background: oklch(var(--border));
     border-radius: 5px;
   }
   * {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--border)) transparent;
+    scrollbar-color: oklch(var(--border)) transparent;
+  }
+
+  /* View transition animations */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  /* Improved view transition for theme switching */
+  ::view-transition-new(root) {
+    animation: theme-fade-in 0.7s ease-in-out;
+  }
+
+  ::view-transition-old(root) {
+    animation: theme-fade-out 0.7s ease-in-out;
+  }
+
+  @keyframes theme-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes theme-fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
   }
 }
 
@@ -552,14 +604,22 @@
   }
 
   .border-grid {
-    @apply border-border/50 dark:border-border border-dashed;
+    @apply border-border/50 border-dashed;
   }
 
   .container-wrapper {
-    @apply max-w-[1400px] min-[1800px]:max-w-screen-2xl min-[1400px]:border-x border-border/70 dark:border-border mx-auto w-full border-dashed;
+    @apply max-w-[1400px] min-[1800px]:max-w-screen-2xl min-[1400px]:border-x border-border/70 mx-auto w-full border-dashed;
   }
 
   .container {
     @apply px-4 xl:px-6 mx-auto max-w-screen-2xl;
+  }
+
+  /* Theme-aware utilities */
+  .theme-transition {
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease;
   }
 }

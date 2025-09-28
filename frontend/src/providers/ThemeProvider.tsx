@@ -1,58 +1,79 @@
-import { useEffect, useState } from 'react';
+import type { Theme, ThemeContextType } from '@/types/theme';
+import { useCallback, useEffect, useState } from 'react';
 import { ThemeProviderContext } from './ThemeContext';
-import type {
-  Theme,
-  ThemeProviderProps,
-  ThemeProviderContextType,
-} from '@/types/theme';
 
-export function ThemeProvider({
-  children,
-  defaultTheme = 'system',
-  storageKey = 'vite-ui-theme',
-  ...props
-}: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
-  });
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  const [theme, setThemeState] = useState<Theme>('system');
+  const [actualTheme, setActualTheme] = useState<string>('light');
 
-  useEffect(() => {
-    const root = window.document.documentElement;
-    const allThemes: Theme[] = [
-      'system',
+  const getSystemTheme = (): 'light' | 'dark' => {
+    if (typeof window === 'undefined') return 'light';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
+  };
+
+  const applyTheme = useCallback((newTheme: Theme) => {
+    if (typeof window === 'undefined') return;
+
+    const root = document.documentElement;
+    const allThemes = [
       'light',
       'dark',
-      'light-violet',
-      'dark-violet',
       'light-green',
       'dark-green',
       'light-blue',
       'dark-blue',
+      'light-violet',
+      'dark-violet',
     ];
 
     root.classList.remove(...allThemes);
 
-    if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-        .matches
-        ? 'dark'
-        : 'light';
-      root.classList.add(systemTheme);
+    let resolvedTheme: string;
+    if (newTheme === 'system') {
+      resolvedTheme = getSystemTheme();
     } else {
-      root.classList.add(theme);
+      resolvedTheme = newTheme;
     }
-  }, [theme]);
+
+    // Add the new theme class
+    root.classList.add(resolvedTheme);
+    setActualTheme(resolvedTheme);
+  }, []);
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme, applyTheme]);
+
+  useEffect(() => {
+    if (theme !== 'system') return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleSystemThemeChange = () => {
+      if (theme === 'system') {
+        applyTheme('system');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+    return () =>
+      mediaQuery.removeEventListener('change', handleSystemThemeChange);
+  }, [theme, applyTheme]);
 
   const setTheme = (newTheme: Theme) => {
-    localStorage.setItem(storageKey, newTheme);
     setThemeState(newTheme);
   };
 
-  const value: ThemeProviderContextType = { theme, setTheme };
+  const value: ThemeContextType = {
+    theme,
+    setTheme,
+    actualTheme,
+  };
 
   return (
-    <ThemeProviderContext.Provider value={value} {...props}>
+    <ThemeProviderContext.Provider value={value}>
       {children}
     </ThemeProviderContext.Provider>
   );
-}
+};

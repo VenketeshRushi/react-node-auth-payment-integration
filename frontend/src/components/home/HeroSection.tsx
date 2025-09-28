@@ -24,7 +24,7 @@ const HeroSection = () => {
           <h1 className='text-5xl sm:text-6xl md:text-6xl lg:text-8xl font-bold tracking-tight mb-6 relative'>
             <span className='text-foreground'>Automate Your</span>
             <br />
-            <span className='text-primary'>Social Media Success</span>
+            <span className='text-neon font-bold'>Social Media Success</span>
           </h1>
         </div>
 

@@ -2,16 +2,17 @@ export type Theme =
   | 'system'
   | 'light'
   | 'dark'
-  | 'light-violet'
-  | 'dark-violet'
   | 'light-green'
   | 'dark-green'
   | 'light-blue'
-  | 'dark-blue';
+  | 'dark-blue'
+  | 'light-violet'
+  | 'dark-violet';
 
-export interface ThemeProviderContextType {
+export interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  actualTheme: string;
 }
 
 export interface ThemeProviderProps {

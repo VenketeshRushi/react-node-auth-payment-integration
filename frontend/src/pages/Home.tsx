@@ -2,6 +2,7 @@ import React from 'react';
 import FeaturesSection from '@/components/home/FeaturesSection';
 import HeroSection from '@/components/home/HeroSection';
 import PricingSection from '@/components/home/PricingSection';
+import { MarqueeReview } from '@/components/home/ReviewSection';
 
 type Section = {
   id: string;
@@ -21,6 +22,10 @@ export default function Page() {
     {
       id: 'pricing',
       component: <PricingSection />,
+    },
+    {
+      id: 'reviews',
+      component: <MarqueeReview />,
     },
   ];
 

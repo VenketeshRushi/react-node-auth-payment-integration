@@ -12,7 +12,7 @@ interface RootProviderProps {
 export default function RootProvider({ children }: RootProviderProps) {
   return (
     <ReduxProvider store={store}>
-      <ThemeProvider defaultTheme='system' storageKey='vite-ui-theme'>
+      <ThemeProvider>
         <MachineIdProvider>
           {children}
           <Toaster
