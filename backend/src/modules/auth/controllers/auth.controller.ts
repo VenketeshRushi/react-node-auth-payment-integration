@@ -141,7 +141,6 @@ export const registerTempController = async (
       mobile: cleanMobile,
     });
 
-    // Check if user already exists
     const userCheck = await checkUserExists({
       email: cleanEmail,
       mobile_no: cleanMobile,
@@ -155,10 +154,8 @@ export const registerTempController = async (
       throw new APIError('User registration failed.', 409, 'USER_EXISTS');
     }
 
-    // Clear any existing registration data
     await clearRegistrationData(cleanEmail, cleanMobile);
 
-    // Hash password and create temp user data
     const hashedPassword = await hashPassword(password);
     const currentTime = Date.now();
 
@@ -174,11 +171,9 @@ export const registerTempController = async (
       created_at: currentTime,
     };
 
-    // Generate OTPs
     const emailOTP = generateOTP();
     const mobileOTP = generateOTP();
 
-    // Store temp user and OTPs
     await storeTempUser(cleanEmail, userData, AUTH_CONFIG.TEMP_USER_TTL);
     await storeMultipleOTPs([
       {
@@ -195,7 +190,6 @@ export const registerTempController = async (
       },
     ]);
 
-    // Send notifications
     sendVerificationNotifications(
       cleanEmail,
       cleanMobile,

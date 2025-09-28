@@ -719,13 +719,13 @@ export default function EnhancedSignin() {
         <div className='text-center mt-8'>
           <p className='text-xs text-gray-500'>
             By signing in, you agree to our{' '}
-            <a href='#' className='text-blue-600 hover:underline'>
+            <Link to='/' className='text-blue-600 hover:underline'>
               Terms of Service
-            </a>{' '}
+            </Link>{' '}
             and{' '}
-            <a href='#' className='text-blue-600 hover:underline'>
+            <Link to='/' className='text-blue-600 hover:underline'>
               Privacy Policy
-            </a>
+            </Link>
           </p>
         </div>
       </div>

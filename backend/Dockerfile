@@ -60,7 +60,7 @@ RUN npm cache clean --force
 COPY --from=build /usr/src/app/dist ./dist
 
 # Copy environment file (it should be available during build context)
-COPY .env.prod ./
+COPY .env.production ./
 
 # Debug: Verify files in production stage
 RUN echo "Production files:" && ls -la && echo "Dist contents:" && ls -la dist/

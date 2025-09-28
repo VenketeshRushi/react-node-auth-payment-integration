@@ -15,11 +15,23 @@ interface FormData {
   password: string;
   confirmPassword: string;
   phone: string;
-  otp: string;
+  emailOtp: string;
+  mobileOtp: string;
+}
+
+interface OTPStatus {
+  email: {
+    sent: boolean;
+    countdown: number;
+  };
+  mobile: {
+    sent: boolean;
+    countdown: number;
+  };
 }
 
 export default function Signup() {
-  const [currentStep, setCurrentStep] = useState<Step>('account');
+  const [currentStep, setCurrentStep] = useState<Step>('verification');
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -27,23 +39,50 @@ export default function Signup() {
     password: '',
     confirmPassword: '',
     phone: '',
-    otp: '',
+    emailOtp: '',
+    mobileOtp: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
-  const [countdown, setCountdown] = useState(0);
+  const [otpStatus, setOtpStatus] = useState<OTPStatus>({
+    email: { sent: false, countdown: 0 },
+    mobile: { sent: false, countdown: 0 },
+  });
 
   const navigate = useNavigate();
 
-  // Countdown timer for OTP resend
+  // Countdown timers for OTP resend
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (countdown > 0) {
-      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    let emailTimer: NodeJS.Timeout;
+    let mobileTimer: NodeJS.Timeout;
+
+    if (otpStatus.email.countdown > 0) {
+      emailTimer = setTimeout(
+        () =>
+          setOtpStatus(prev => ({
+            ...prev,
+            email: { ...prev.email, countdown: prev.email.countdown - 1 },
+          })),
+        1000
+      );
     }
-    return () => clearTimeout(timer);
-  }, [countdown]);
+
+    if (otpStatus.mobile.countdown > 0) {
+      mobileTimer = setTimeout(
+        () =>
+          setOtpStatus(prev => ({
+            ...prev,
+            mobile: { ...prev.mobile, countdown: prev.mobile.countdown - 1 },
+          })),
+        1000
+      );
+    }
+
+    return () => {
+      clearTimeout(emailTimer);
+      clearTimeout(mobileTimer);
+    };
+  }, [otpStatus.email.countdown, otpStatus.mobile.countdown]);
 
   const handleFieldChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -68,12 +107,30 @@ export default function Signup() {
     } catch (error) {
       if (error instanceof ZodError) {
         const newErrors: Record<string, string> = {};
-        error.errors.forEach(err => {
+        error.issues.forEach(err => {
           if (err.path.length > 0) {
             newErrors[err.path[0] as string] = err.message;
           }
         });
         setErrors(newErrors);
+      }
+      return false;
+    }
+  };
+
+  const validateEmail = (): boolean => {
+    try {
+      signupSchema.shape.email.parse(formData.email);
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.email;
+        return newErrors;
+      });
+      return true;
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const emailError = error.issues[0]?.message || 'Invalid email address';
+        setErrors(prev => ({ ...prev, email: emailError }));
       }
       return false;
     }
@@ -90,41 +147,71 @@ export default function Signup() {
       return true;
     } catch (error) {
       if (error instanceof ZodError) {
-        const phoneError = error.errors[0]?.message || 'Invalid phone number';
+        const phoneError = error.issues[0]?.message || 'Invalid phone number';
         setErrors(prev => ({ ...prev, phone: phoneError }));
       }
       return false;
     }
   };
 
-  const validateOTP = (): boolean => {
+  const validateEmailOTP = (): boolean => {
     try {
-      otpSchema.shape.mobileOtp.parse(formData.otp);
+      otpSchema.shape.emailOtp.parse(formData.emailOtp);
       setErrors(prev => {
         const newErrors = { ...prev };
-        delete newErrors.otp;
+        delete newErrors.emailOtp;
         return newErrors;
       });
       return true;
     } catch (error) {
       if (error instanceof ZodError) {
-        const otpError = error.errors[0]?.message || 'Invalid OTP';
-        setErrors(prev => ({ ...prev, otp: otpError }));
+        const otpError = error.issues[0]?.message || 'Invalid email OTP';
+        setErrors(prev => ({ ...prev, emailOtp: otpError }));
       }
       return false;
     }
   };
 
-  const sendOTP = async (phone: string): Promise<boolean> => {
-    console.log('Sending OTP to:', phone);
+  const validateMobileOTP = (): boolean => {
+    try {
+      otpSchema.shape.mobileOtp.parse(formData.mobileOtp);
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.mobileOtp;
+        return newErrors;
+      });
+      return true;
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const otpError = error.issues[0]?.message || 'Invalid mobile OTP';
+        setErrors(prev => ({ ...prev, mobileOtp: otpError }));
+      }
+      return false;
+    }
+  };
+
+  const sendEmailOTP = async (email: string): Promise<boolean> => {
+    console.log('Sending email OTP to:', email);
     await new Promise(resolve => setTimeout(resolve, 1500));
     return Math.random() > 0.1;
   };
 
-  const verifyOTPAndCreateAccount = async (otp: string): Promise<boolean> => {
-    console.log('Verifying OTP and creating account:', otp);
+  const sendMobileOTP = async (phone: string): Promise<boolean> => {
+    console.log('Sending mobile OTP to:', phone);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    return Math.random() > 0.1;
+  };
+
+  const verifyOTPAndCreateAccount = async (
+    emailOtp: string,
+    mobileOtp: string
+  ): Promise<boolean> => {
+    console.log('Verifying OTPs and creating account:', {
+      emailOtp,
+      mobileOtp,
+    });
     await new Promise(resolve => setTimeout(resolve, 2000));
-    return otp === '123456';
+    return emailOtp === '123456' && mobileOtp === '654321';
   };
 
   const handleStep1Next = async () => {
@@ -151,26 +238,56 @@ export default function Signup() {
     }
   };
 
-  const handleSendOTP = async () => {
+  const handleSendEmailOTP = async () => {
+    if (!validateEmail()) return;
+
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      const success = await sendEmailOTP(formData.email);
+      if (success) {
+        setOtpStatus(prev => ({
+          ...prev,
+          email: { sent: true, countdown: 60 },
+        }));
+        handleFieldChange('emailOtp', ''); // Clear any existing OTP
+      } else {
+        setErrors({
+          submit: 'Failed to send email verification code. Please try again.',
+        });
+      }
+    } catch (error) {
+      setErrors({
+        submit: 'Failed to send email verification code. Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSendMobileOTP = async () => {
     if (!validatePhone()) return;
 
     setIsLoading(true);
     setErrors({});
 
     try {
-      const success = await sendOTP(formData.phone);
+      const success = await sendMobileOTP(formData.phone);
       if (success) {
-        setOtpSent(true);
-        setCountdown(60);
-        handleFieldChange('otp', ''); // Clear any existing OTP
+        setOtpStatus(prev => ({
+          ...prev,
+          mobile: { sent: true, countdown: 60 },
+        }));
+        handleFieldChange('mobileOtp', ''); // Clear any existing OTP
       } else {
         setErrors({
-          submit: 'Failed to send verification code. Please try again.',
+          submit: 'Failed to send mobile verification code. Please try again.',
         });
       }
     } catch (error) {
       setErrors({
-        submit: 'Failed to send verification code. Please try again.',
+        submit: 'Failed to send mobile verification code. Please try again.',
       });
     } finally {
       setIsLoading(false);
@@ -178,13 +295,19 @@ export default function Signup() {
   };
 
   const handleVerifyAndCreate = async () => {
-    if (!validateOTP()) return;
+    const emailValid = validateEmailOTP();
+    const mobileValid = validateMobileOTP();
+
+    if (!emailValid || !mobileValid) return;
 
     setIsLoading(true);
     setErrors({});
 
     try {
-      const success = await verifyOTPAndCreateAccount(formData.otp);
+      const success = await verifyOTPAndCreateAccount(
+        formData.emailOtp,
+        formData.mobileOtp
+      );
       if (success) {
         setErrors({
           success: 'Account created successfully! Redirecting to sign in...',
@@ -193,7 +316,7 @@ export default function Signup() {
           navigate('/signin');
         }, 2000);
       } else {
-        setErrors({ submit: 'Invalid verification code. Please try again.' });
+        setErrors({ submit: 'Invalid verification codes. Please try again.' });
       }
     } catch (error) {
       setErrors({ submit: 'Verification failed. Please try again.' });
@@ -202,25 +325,57 @@ export default function Signup() {
     }
   };
 
-  const handleResendOTP = async () => {
-    if (countdown > 0) return;
+  const handleResendEmailOTP = async () => {
+    if (otpStatus.email.countdown > 0) return;
 
     setIsLoading(true);
     setErrors({});
 
     try {
-      const success = await sendOTP(formData.phone);
+      const success = await sendEmailOTP(formData.email);
       if (success) {
-        setCountdown(60);
-        handleFieldChange('otp', '');
+        setOtpStatus(prev => ({
+          ...prev,
+          email: { sent: true, countdown: 60 },
+        }));
+        handleFieldChange('emailOtp', '');
       } else {
         setErrors({
-          submit: 'Failed to resend verification code. Please try again.',
+          submit: 'Failed to resend email verification code. Please try again.',
         });
       }
     } catch (error) {
       setErrors({
-        submit: 'Failed to resend verification code. Please try again.',
+        submit: 'Failed to resend email verification code. Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendMobileOTP = async () => {
+    if (otpStatus.mobile.countdown > 0) return;
+
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      const success = await sendMobileOTP(formData.phone);
+      if (success) {
+        setOtpStatus(prev => ({
+          ...prev,
+          mobile: { sent: true, countdown: 60 },
+        }));
+        handleFieldChange('mobileOtp', '');
+      } else {
+        setErrors({
+          submit:
+            'Failed to resend mobile verification code. Please try again.',
+        });
+      }
+    } catch (error) {
+      setErrors({
+        submit: 'Failed to resend mobile verification code. Please try again.',
       });
     } finally {
       setIsLoading(false);
@@ -229,13 +384,15 @@ export default function Signup() {
 
   const handleBack = () => {
     setCurrentStep('account');
-    setOtpSent(false);
-    setCountdown(0);
+    setOtpStatus({
+      email: { sent: false, countdown: 0 },
+      mobile: { sent: false, countdown: 0 },
+    });
     setErrors({});
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center px-4 py-8'>
+    <div className='min-h-screen flex items-center justify-center px-4 py-24'>
       <div className='w-full max-w-md'>
         <div className='text-center mb-8'>
           <div className='inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-4'>
@@ -276,16 +433,24 @@ export default function Signup() {
 
           {currentStep === 'verification' && (
             <Step2Verification
-              formData={{ phone: formData.phone, otp: formData.otp }}
+              formData={{
+                email: formData.email,
+                phone: formData.phone,
+                emailOtp: formData.emailOtp,
+                mobileOtp: formData.mobileOtp,
+              }}
               errors={errors}
               isLoading={isLoading}
-              otpSent={otpSent}
-              countdown={countdown}
+              otpStatus={otpStatus}
               onFieldChange={handleFieldChange}
-              onSendOTP={handleSendOTP}
+              onSendEmailOTP={handleSendEmailOTP}
+              onSendMobileOTP={handleSendMobileOTP}
               onVerify={handleVerifyAndCreate}
               onBack={handleBack}
-              onResendOTP={handleResendOTP}
+              onResendEmailOTP={handleResendEmailOTP}
+              onResendMobileOTP={handleResendMobileOTP}
+              onValidateEmail={validateEmail}
+              onValidatePhone={validatePhone}
             />
           )}
         </div>
@@ -301,15 +466,15 @@ export default function Signup() {
                 Sign In
               </Link>
             </p>
-            <p className='text-xs text-muted'>
+            <p className='text-xs text-muted-foreground'>
               By creating an account, you agree to our{' '}
-              <a href='#' className='text-blue-600 hover:underline'>
+              <Link to='/' className='text-blue-600 hover:underline'>
                 Terms of Service
-              </a>{' '}
+              </Link>{' '}
               and{' '}
-              <a href='#' className='text-blue-600 hover:underline'>
+              <Link to='/' className='text-blue-600 hover:underline'>
                 Privacy Policy
-              </a>
+              </Link>
             </p>
           </div>
         )}

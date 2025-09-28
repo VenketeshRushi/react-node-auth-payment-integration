@@ -72,6 +72,8 @@ services:
       dockerfile: frontend/Dockerfile
     container_name: web
     restart: unless-stopped
+    env_file:
+      - ./frontend/.env.production
     ports:
       - "80:80"
     networks:
