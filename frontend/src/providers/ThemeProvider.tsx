@@ -1,6 +1,9 @@
-import type { Theme, ThemeContextType } from '@/types/theme';
 import { useCallback, useEffect, useState } from 'react';
-import { ThemeProviderContext } from './ThemeContext';
+import {
+  ThemeContext,
+  type Theme,
+  type ThemeContextType,
+} from '@/providers/ThemeContext';
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setThemeState] = useState<Theme>('system');
@@ -72,8 +75,6 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <ThemeProviderContext.Provider value={value}>
-      {children}
-    </ThemeProviderContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 };

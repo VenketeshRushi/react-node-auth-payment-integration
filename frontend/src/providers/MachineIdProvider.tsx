@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { authAxios } from '@/axios/instance';
 import { setCookies } from '@/utils/ext';
-import type { ApiResponse } from '@/types/api';
 
 export function MachineIdProvider({ children }: { children: React.ReactNode }) {
   const hasFetched = useRef(false);
@@ -11,7 +10,7 @@ export function MachineIdProvider({ children }: { children: React.ReactNode }) {
     hasFetched.current = true;
 
     authAxios
-      .get<ApiResponse<{ id: string }>>('/auth/machine-id')
+      .get('/auth/machine-id')
       .then(
         res => res.data.data?.id && setCookies({ machineId: res.data.data.id })
       );

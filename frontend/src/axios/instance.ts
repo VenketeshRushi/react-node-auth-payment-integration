@@ -5,7 +5,6 @@ import axios, {
   type AxiosError,
   type AxiosResponse,
 } from 'axios';
-import type { ApiResponse } from '@/types/api';
 
 const baseURL = import.meta.env.VITE_API_URL;
 
@@ -37,18 +36,18 @@ authAxios.interceptors.request.use(
 );
 
 authAxios.interceptors.response.use(
-  (response: AxiosResponse<ApiResponse>) => response,
-  (error: AxiosError<ApiResponse>) => {
-    if (error.response) {
-      const apiError = error.response.data;
+  (response: AxiosResponse) => response,
+  (error: AxiosError) => {
+    if (error?.response) {
+      const apiError = error?.response?.data as any;
 
       const normalizedError = Object.assign(
-        new Error(apiError.message || 'API Error'),
+        new Error(apiError?.message || 'API Error'),
         {
           success: false,
-          statusCode: error.response.status,
-          errorCode: apiError.errorCode,
-          data: apiError.data,
+          statusCode: error?.response?.status,
+          errorCode: apiError?.errorCode,
+          data: apiError?.data,
         }
       );
 
