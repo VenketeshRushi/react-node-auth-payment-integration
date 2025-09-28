@@ -2,7 +2,10 @@ import { getCookies } from '@/utils/ext';
 import axios, {
   type AxiosInstance,
   type InternalAxiosRequestConfig,
+  type AxiosError,
+  type AxiosResponse,
 } from 'axios';
+import type { ApiResponse } from '@/types/api';
 
 const baseURL = import.meta.env.VITE_API_URL;
 
@@ -22,11 +25,37 @@ authAxios.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     try {
       const { machineId } = getCookies();
-      if (machineId) config.headers!['X-Machine-Id'] = machineId;
+      if (machineId) {
+        config.headers!['X-Machine-Id'] = machineId;
+      }
       return config;
     } catch (error) {
       return Promise.reject(error);
     }
   },
-  error => Promise.reject(error)
+  (error: AxiosError) => Promise.reject(error)
+);
+
+authAxios.interceptors.response.use(
+  (response: AxiosResponse<ApiResponse>) => response,
+  (error: AxiosError<ApiResponse>) => {
+    if (error.response) {
+      const apiError = error.response.data;
+
+      const normalizedError = Object.assign(
+        new Error(apiError.message || 'API Error'),
+        {
+          success: false,
+          statusCode: error.response.status,
+          errorCode: apiError.errorCode,
+          data: apiError.data,
+        }
+      );
+
+      return Promise.reject(normalizedError);
+    }
+
+    // Network or unexpected errors
+    return Promise.reject(new Error(error.message || 'Network error occurred'));
+  }
 );

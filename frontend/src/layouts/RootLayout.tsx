@@ -12,7 +12,7 @@ export default function PublicLayout() {
 
       <LayoutAnimation>
         <main className='flex-1'>
-          <div className='mx-auto w-full py-32'>
+          <div className='mx-auto w-full py-6'>
             <Outlet />
           </div>
         </main>

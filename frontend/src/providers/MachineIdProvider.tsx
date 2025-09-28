@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
-import Cookies from 'js-cookie';
-import { fetchMachineId } from '@/api/auth';
+import { authAxios } from '@/axios/instance';
+import { setCookies } from '@/utils/ext';
+import type { ApiResponse } from '@/types/api';
 
 export function MachineIdProvider({ children }: { children: React.ReactNode }) {
   const hasFetched = useRef(false);
@@ -9,18 +10,11 @@ export function MachineIdProvider({ children }: { children: React.ReactNode }) {
     if (hasFetched.current) return;
     hasFetched.current = true;
 
-    const existingId = Cookies.get('machineId');
-    if (!existingId) {
-      const getMachineId = async () => {
-        try {
-          const id = await fetchMachineId();
-          Cookies.set('machineId', id);
-        } catch (err) {
-          console.error('Failed to get machine ID:', (err as Error).message);
-        }
-      };
-      getMachineId();
-    }
+    authAxios
+      .get<ApiResponse<{ id: string }>>('/auth/machine-id')
+      .then(
+        res => res.data.data?.id && setCookies({ machineId: res.data.data.id })
+      );
   }, []);
 
   return <>{children}</>;

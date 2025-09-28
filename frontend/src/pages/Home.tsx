@@ -25,7 +25,7 @@ export default function Page() {
   ];
 
   return (
-    <div className='relative isolate'>
+    <div className='relative isolate py-24'>
       {sections.map(section => (
         <div id={section.id} key={section.id}>
           {section.component}

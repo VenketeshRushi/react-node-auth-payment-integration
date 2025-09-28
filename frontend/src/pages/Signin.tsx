@@ -345,11 +345,11 @@ export default function EnhancedSignin() {
     isOtpSent;
 
   return (
-    <div className='flex items-center justify-center p-4'>
+    <div className='min-h-screen flex items-center justify-center px-4 py-24'>
       <div className='w-full max-w-md'>
         {/* Header */}
         <div className='text-center mb-6'>
-          <div className='inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl mb-4'>
+          <div className='inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-4'>
             <Shield className='w-8 h-8 text-white' />
           </div>
           <h1 className='text-2xl font-bold mb-2'>Welcome Back</h1>
@@ -454,7 +454,7 @@ export default function EnhancedSignin() {
                   <Input
                     id='email'
                     type='email'
-                    placeholder='john@example.com'
+                    placeholder='john@gmail.com'
                     value={formData.email}
                     onChange={e => handleFieldChange('email', e.target.value)}
                     onBlur={() => handleFieldBlur('email')}

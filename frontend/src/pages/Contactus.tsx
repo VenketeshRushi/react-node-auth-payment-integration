@@ -1,159 +1,273 @@
-export default function Contactus() {
+import React, { useState } from 'react';
+
+export default function ContactUs() {
+  const [isChecked, setIsChecked] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    company: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    console.log('Form submitted:', formData);
+  };
+
   return (
-    <div className='px-2 w-full'>
-      <div className='mx-auto max-w-2xl text-center'>
-        <h2 className='text-4xl font-semibold tracking-tight text-balance text-foreground sm:text-5xl'>
-          Contact Us
-        </h2>
-        <p className='mt-2 text-lg leading-8 text-muted-foreground'>
-          Aute magna irure deserunt veniam aliqua magna enim voluptate.
-        </p>
-      </div>
-      <form
-        method='POST'
-        className='mx-auto mt-10 max-w-2xl sm:mt-12 bg-card p-8 rounded-lg'
-      >
-        <div className='grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2'>
-          <div>
-            <label
-              htmlFor='first-name'
-              className='block text-sm leading-6 font-semibold text-foreground'
+    <div className='bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-24 px-4 w-full'>
+      <div className='mx-auto max-w-4xl'>
+        <div className='text-center mb-16'>
+          <div className='inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4'>
+            <svg
+              className='w-8 h-8 text-primary'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
             >
-              First name
-            </label>
-            <div className='mt-1'>
-              <input
-                id='first-name'
-                name='first-name'
-                type='text'
-                autoComplete='given-name'
-                className='block w-full rounded-md bg-background border border-input px-3.5 py-2 text-base text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background transition-colors'
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'
               />
-            </div>
+            </svg>
           </div>
-          <div>
-            <label
-              htmlFor='last-name'
-              className='block text-sm leading-6 font-semibold text-foreground'
-            >
-              Last name
-            </label>
-            <div className='mt-1'>
-              <input
-                id='last-name'
-                name='last-name'
-                type='text'
-                autoComplete='family-name'
-                className='block w-full rounded-md bg-background border border-input px-3.5 py-2 text-base text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background transition-colors'
-              />
-            </div>
-          </div>
-          <div className='sm:col-span-2'>
-            <label
-              htmlFor='company'
-              className='block text-sm leading-6 font-semibold text-foreground'
-            >
-              Company
-            </label>
-            <div className='mt-1'>
-              <input
-                id='company'
-                name='company'
-                type='text'
-                autoComplete='organization'
-                className='block w-full rounded-md bg-background border border-input px-3.5 py-2 text-base text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background transition-colors'
-              />
-            </div>
-          </div>
-          <div className='sm:col-span-2'>
-            <label
-              htmlFor='email'
-              className='block text-sm leading-6 font-semibold text-foreground'
-            >
-              Email
-            </label>
-            <div className='mt-1'>
-              <input
-                id='email'
-                name='email'
-                type='email'
-                autoComplete='email'
-                className='block w-full rounded-md bg-background border border-input px-3.5 py-2 text-base text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background transition-colors'
-              />
-            </div>
-          </div>
-          <div className='sm:col-span-2'>
-            <label
-              htmlFor='phone-number'
-              className='block text-sm leading-6 font-semibold text-foreground'
-            >
-              Phone number
-            </label>
-            <div className='mt-1'>
-              <div className='flex rounded-md bg-background border border-input has-[:focus]:border-ring has-[:focus]:ring-2 has-[:focus]:ring-ring has-[:focus]:ring-offset-2 has-[:focus]:ring-offset-background transition-colors'>
+          <h1 className='text-5xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-6xl mb-4'>
+            Get in <span className='text-primary'>Touch</span>
+          </h1>
+          <p className='text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed'>
+            We'd love to hear from you. Send us a message and we'll respond as
+            soon as possible.
+          </p>
+        </div>
+
+        <div className='bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden'>
+          <div className='p-8 sm:p-12'>
+            <div className='space-y-8'>
+              <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
+                <div className='group'>
+                  <label
+                    htmlFor='firstName'
+                    className='block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2'
+                  >
+                    First Name
+                  </label>
+                  <input
+                    id='firstName'
+                    name='firstName'
+                    type='text'
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    className='block w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-slate-400 dark:hover:border-slate-500'
+                    placeholder='Enter your first name'
+                  />
+                </div>
+                <div className='group'>
+                  <label
+                    htmlFor='lastName'
+                    className='block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2'
+                  >
+                    Last Name
+                  </label>
+                  <input
+                    id='lastName'
+                    name='lastName'
+                    type='text'
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    className='block w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-slate-400 dark:hover:border-slate-500'
+                    placeholder='Enter your last name'
+                  />
+                </div>
+              </div>
+
+              <div className='group'>
+                <label
+                  htmlFor='company'
+                  className='block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2'
+                >
+                  Company
+                </label>
                 <input
-                  id='phone-number'
-                  name='phone-number'
+                  id='company'
+                  name='company'
                   type='text'
-                  className='block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-foreground placeholder:text-muted-foreground focus:outline-none sm:text-sm leading-6'
+                  value={formData.company}
+                  onChange={handleInputChange}
+                  className='block w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-slate-400 dark:hover:border-slate-500'
+                  placeholder='Your company name'
                 />
+              </div>
+
+              <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
+                <div className='group'>
+                  <label
+                    htmlFor='email'
+                    className='block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2'
+                  >
+                    Email Address
+                  </label>
+                  <input
+                    id='email'
+                    name='email'
+                    type='email'
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className='block w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-slate-400 dark:hover:border-slate-500'
+                    placeholder='your@email.com'
+                    required
+                  />
+                </div>
+                <div className='group'>
+                  <label
+                    htmlFor='phone'
+                    className='block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2'
+                  >
+                    Phone Number
+                  </label>
+                  <input
+                    id='phone'
+                    name='phone'
+                    type='tel'
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className='block w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-slate-400 dark:hover:border-slate-500'
+                    placeholder='+91 123 456 7890'
+                  />
+                </div>
+              </div>
+
+              <div className='group'>
+                <label
+                  htmlFor='message'
+                  className='block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2'
+                >
+                  Message
+                </label>
+                <textarea
+                  id='message'
+                  name='message'
+                  rows={5}
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  className='block w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none hover:border-slate-400 dark:hover:border-slate-500 resize-none'
+                  placeholder='Tell us about your project or question...'
+                  required
+                />
+              </div>
+
+              <div className='flex items-start space-x-3'>
+                <div className='relative'>
+                  <input
+                    id='agree-to-policies'
+                    name='agree-to-policies'
+                    type='checkbox'
+                    checked={isChecked}
+                    onChange={e => setIsChecked(e.target.checked)}
+                    className='peer h-5 w-5 rounded border-2 border-slate-300 dark:border-slate-600 text-primary focus:ring-4 focus:ring-primary/20 focus:ring-offset-0 transition-all duration-200 cursor-pointer'
+                    required
+                  />
+                  <div className='pointer-events-none absolute inset-0 rounded border-2 border-transparent bg-gradient-to-br from-primary to-blue-600 opacity-0 transition-opacity duration-200 peer-checked:opacity-100'>
+                    <svg
+                      className='h-full w-full p-0.5 text-white'
+                      fill='currentColor'
+                      viewBox='0 0 20 20'
+                    >
+                      <path
+                        fillRule='evenodd'
+                        d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                        clipRule='evenodd'
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <label
+                  htmlFor='agree-to-policies'
+                  className='text-sm text-slate-600 dark:text-slate-300 leading-5 cursor-pointer'
+                >
+                  I agree to the{' '}
+                  <a
+                    href='#'
+                    className='font-semibold text-primary hover:text-primary/80 transition-colors underline underline-offset-2'
+                  >
+                    Privacy Policy
+                  </a>{' '}
+                  and{' '}
+                  <a
+                    href='#'
+                    className='font-semibold text-primary hover:text-primary/80 transition-colors underline underline-offset-2'
+                  >
+                    Terms of Service
+                  </a>
+                </label>
+              </div>
+
+              <div className='pt-4'>
+                <button
+                  type='button'
+                  onClick={handleSubmit}
+                  disabled={!isChecked}
+                  className='group relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-primary to-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-primary/25 focus:outline-none focus:ring-4 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg'
+                >
+                  <span className='relative z-10 flex items-center justify-center space-x-2'>
+                    <span>Send Message</span>
+                  </span>
+                </button>
               </div>
             </div>
           </div>
-          <div className='sm:col-span-2'>
-            <label
-              htmlFor='message'
-              className='block text-sm leading-6 font-semibold text-foreground'
-            >
-              Message
-            </label>
-            <div className='mt-1'>
-              <textarea
-                id='message'
-                name='message'
-                rows={4}
-                className='block w-full rounded-md bg-background border border-input px-3.5 py-2 text-base text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background transition-colors resize-none'
-                defaultValue={''}
-              />
-            </div>
-          </div>
-          <div className='flex gap-x-4 sm:col-span-2'>
-            <div className='flex h-6 items-center'>
-              <div className='group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-muted transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background data-[checked]:bg-primary'>
-                <span
-                  aria-hidden='true'
-                  className='pointer-events-none inline-block h-5 w-5 rounded-full bg-background shadow transform ring-0 transition duration-200 ease-in-out translate-x-0 group-data-[checked]:translate-x-5'
-                />
-                <input
-                  id='agree-to-policies'
-                  name='agree-to-policies'
-                  type='checkbox'
-                  aria-label='Agree to policies'
-                  className='absolute inset-0 h-full w-full cursor-pointer opacity-0 focus:outline-none'
-                />
+
+          <div className='bg-slate-50 dark:bg-slate-700/50 px-8 py-6 sm:px-12'>
+            <div className='flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0'>
+              <div className='flex items-center space-x-4 text-sm text-slate-600 dark:text-slate-400'>
+                <div className='flex items-center space-x-2'>
+                  <svg
+                    className='w-4 h-4'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
+                    />
+                  </svg>
+                  <span>Response within 24 hours</span>
+                </div>
+                <div className='flex items-center space-x-2'>
+                  <svg
+                    className='w-4 h-4'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                    />
+                  </svg>
+                  <span>100% Secure</span>
+                </div>
               </div>
             </div>
-            <label
-              htmlFor='agree-to-policies'
-              className='text-sm leading-6 text-muted-foreground cursor-pointer'
-            >
-              By selecting this, you agree to our{' '}
-              <a className='font-semibold whitespace-nowrap text-primary hover:text-primary/80 transition-colors'>
-                privacy policy
-              </a>
-              .
-            </label>
           </div>
         </div>
-        <div className='mt-10'>
-          <button
-            type='submit'
-            className='block w-full rounded-md bg-primary px-3.5 py-2.5 text-center text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors'
-          >
-            Let's talk
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { getCookies, removeAllCookies } from '@/utils/ext';
+import { getCookies, removeCookies } from '@/utils/ext';
 
 interface RoleGuardProps {
   role: string;
@@ -10,7 +10,7 @@ const RoleGuard = ({ role, children }: RoleGuardProps) => {
   const { machineId } = getCookies();
 
   if (!machineId) {
-    removeAllCookies();
+    removeCookies();
     return <Navigate to='/signin' replace />;
   }
 

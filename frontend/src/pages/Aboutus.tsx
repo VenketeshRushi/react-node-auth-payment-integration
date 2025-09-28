@@ -38,7 +38,7 @@ export default function Aboutus() {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <section className="py-12 sm:py-8 relative xl:mr-0 lg:mr-5 mr-0 lg:bg-[url('/svg/bg.svg')] lg:bg-no-repeat lg:bg-top bg-cover">
+    <section className="py-24 relative xl:mr-0 lg:mr-5 mr-0 lg:bg-[url('/svg/bg.svg')] lg:bg-no-repeat lg:bg-top bg-cover">
       <div className='w-full max-w-7xl px-4 md:px-5 lg:px-5 mx-auto'>
         <div className='w-full justify-start items-center xl:gap-12 gap-10 grid lg:grid-cols-2 grid-cols-1'>
           {/* LEFT CONTENT */}
