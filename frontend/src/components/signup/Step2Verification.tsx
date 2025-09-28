@@ -96,9 +96,9 @@ export default function Step2Verification({
             id='email'
             type='email'
             value={formData.email}
+            placeholder='john@gmail.com'
             onChange={e => onFieldChange('email', e.target.value)}
             disabled
-            className='bg-gray-50'
           />
           {errors.email && (
             <p className='text-xs text-destructive flex items-center gap-1'>

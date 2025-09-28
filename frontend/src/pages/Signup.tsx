@@ -1,10 +1,10 @@
-import Step1BasicInfo from '@/components/signup/Step1BasicInfo';
-import { Shield } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Shield } from 'lucide-react';
+import Step1BasicInfo from '@/components/signup/Step1BasicInfo';
+import Step2Verification from '@/components/signup/Step2Verification';
 import { signupSchema, otpSchema } from '@/validation/signup.schema';
 import { ZodError } from 'zod';
-import Step2Verification from '@/components/signup/Step2Verification';
 
 type Step = 'account' | 'verification';
 
@@ -31,7 +31,7 @@ interface OTPStatus {
 }
 
 export default function Signup() {
-  const [currentStep, setCurrentStep] = useState<Step>('verification');
+  const [currentStep, setCurrentStep] = useState<Step>('account');
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -396,7 +396,7 @@ export default function Signup() {
       <div className='w-full max-w-md'>
         <div className='text-center mb-8'>
           <div className='inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-4'>
-            <Shield className='w-8 h-8 text-white' />
+            <Shield className='w-8 h-8 text-primary-foreground' />
           </div>
           <h1 className='text-2xl font-bold mb-2'>Welcome to Acme Inc.</h1>
           <p>Create your account to get started</p>
@@ -428,6 +428,9 @@ export default function Signup() {
               isLoading={isLoading}
               onFieldChange={handleFieldChange}
               onNext={handleStep1Next}
+              onGoogleSignup={() => {
+                console.log('Google signup clicked');
+              }}
             />
           )}
 

@@ -1,4 +1,13 @@
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme =
+  | 'system'
+  | 'light'
+  | 'dark'
+  | 'light-violet'
+  | 'dark-violet'
+  | 'light-green'
+  | 'dark-green'
+  | 'light-blue'
+  | 'dark-blue';
 
 export interface ThemeProviderContextType {
   theme: Theme;
