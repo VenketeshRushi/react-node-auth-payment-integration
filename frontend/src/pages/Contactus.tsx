@@ -26,7 +26,7 @@ export default function ContactUs() {
   };
 
   return (
-    <div className='bg-gradient-to-br from-background to-muted/50 py-24 px-4 w-full min-h-screen'>
+    <div className='py-24 px-4 w-full min-h-screen'>
       <div className='mx-auto max-w-4xl'>
         <div className='text-center mb-16'>
           <div className='inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4'>

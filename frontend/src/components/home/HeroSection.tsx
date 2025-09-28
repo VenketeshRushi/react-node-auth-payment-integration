@@ -24,7 +24,7 @@ const HeroSection = () => {
           <h1 className='text-5xl sm:text-6xl md:text-6xl lg:text-8xl font-bold tracking-tight mb-6 relative'>
             <span className='text-foreground'>Automate Your</span>
             <br />
-            <span className='text-neon font-bold'>Social Media Success</span>
+            <span className='font-bold'>Social Media Success</span>
           </h1>
         </div>
 
@@ -32,8 +32,7 @@ const HeroSection = () => {
           Schedule posts, generate AI content, track performance, and grow your
           audience across all platforms. The complete social media automation
           platform for{' '}
-          <span className='font-medium text-foreground'>modern businesses</span>
-          .
+          <span className='font-medium text-primary'>modern businesses</span>.
         </p>
 
         <div className='flex flex-wrap justify-center gap-8 mb-12'>

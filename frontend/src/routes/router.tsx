@@ -5,7 +5,7 @@ import PublicRoute from '@/routes/PublicRoute';
 import PrivateRoute from '@/routes/PrivateRoute';
 import RoleGuard from '@/routes/RoleGuard';
 import PrivateLayout from '@/layouts/PrivateLayout';
-import RootLayout from '@/layouts/RootLayout';
+import RootLayout from '@/layouts/PublicLayout';
 
 const NotFound = lazy(() => import('@/pages/NotFound'));
 

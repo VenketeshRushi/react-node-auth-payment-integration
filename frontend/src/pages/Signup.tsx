@@ -414,7 +414,7 @@ export default function Signup() {
             <div className='h-2 flex-1 bg-primary rounded-full' />
             <div
               className={`h-2 flex-1 rounded-full transition-colors duration-300 ${
-                currentStep === 'verification' ? 'bg-primary' : 'bg-gray-200'
+                currentStep === 'verification' ? 'bg-primary' : 'bg-accent'
               }`}
             />
           </div>

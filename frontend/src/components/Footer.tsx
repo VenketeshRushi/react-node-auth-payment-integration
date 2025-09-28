@@ -54,7 +54,7 @@ const Footer = ({
 }: FooterProps) => {
   return (
     <footer className='px-4 py-6 w-full'>
-      <div className='container mx-auto max-w-7xl'>
+      <div className='mx-auto'>
         <div className='grid grid-cols-1 gap-8 sm:grid-cols-2 md:gap-10 lg:grid-cols-4 lg:gap-16'>
           <div className='mb-6 lg:mb-0'>
             <Link

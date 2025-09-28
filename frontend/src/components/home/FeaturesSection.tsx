@@ -59,17 +59,17 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section className='py-12 relative'>
+    <section className='py-14 relative'>
       <div className='container mx-auto px-6'>
         {/* Section Header */}
         <div className='text-center mb-20 py-3'>
-          <h2 className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight'>
+          <h2 className='text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-8 tracking-tight'>
             <div className='mb-2'>Everything you need to</div>
-            <div className='text-primary'>dominate social media</div>
+            <div className='text-muted-foreground'>dominate social media</div>
           </h2>
 
           <div className='mx-auto max-w-3xl'>
-            <p className='text-xl md:text-2xl text-muted-foreground leading-relaxed'>
+            <p className='text-xl text-muted-foreground leading-relaxed'>
               From AI-powered content creation to advanced analytics, our
               platform gives you all the tools to build a powerful social media
               presence.
