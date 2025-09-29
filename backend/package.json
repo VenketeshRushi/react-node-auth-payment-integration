@@ -10,9 +10,11 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
+    
     "build": "npm run build:production",
     "build:production": "npm run clean && tsc --project tsconfig.json",
     "start:production": "node --env-file=.env.production ./dist/server.js",
+
     "build:development": "tsc --project tsconfig.json",
     "start:development": "node --env-file=.env.development ./dist/server.js",
     "dev": "node --import=tsx --watch --env-file=.env.development server.ts",
