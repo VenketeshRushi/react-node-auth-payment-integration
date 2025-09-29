@@ -14,8 +14,8 @@ export type Theme =
 export interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  actualTheme: string;
 }
+
 export const ThemeContext = createContext<ThemeContextType | undefined>(
   undefined
 );

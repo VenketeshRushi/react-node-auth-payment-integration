@@ -73,19 +73,34 @@ const Navbar = ({
         {
           title: 'Basic Plan',
           description: 'Essential features for individuals',
-          icon: <ShoppingCart className='size-5 shrink-0 text-[#22c55e]' />,
+          icon: (
+            <ShoppingCart
+              className='size-5 shrink-0 stroke-[#22c55e]'
+              strokeWidth={2} // Adjust stroke thickness
+            />
+          ),
           url: '/',
         },
         {
           title: 'Pro Plan',
           description: 'Advanced features for professionals',
-          icon: <DollarSign className='size-5 shrink-0 text-primary' />,
+          icon: (
+            <DollarSign
+              className='size-5 shrink-0 stroke-primary'
+              strokeWidth={2}
+            />
+          ),
           url: '/',
         },
         {
           title: 'Discount Offers',
           description: 'Check out our current discounts',
-          icon: <BadgePercent className='size-5 shrink-0 text-[#f59e0b]' />,
+          icon: (
+            <BadgePercent
+              className='size-5 shrink-0 stroke-[#f59e0b]'
+              strokeWidth={2}
+            />
+          ),
           url: '/',
         },
       ],
@@ -97,13 +112,23 @@ const Navbar = ({
         {
           title: 'Help Center',
           description: 'Get all the answers you need right here',
-          icon: <HelpCircle className='size-5 shrink-0 text-blue-200' />,
+          icon: (
+            <HelpCircle
+              className='size-5 shrink-0 stroke-blue-400'
+              strokeWidth={2}
+            />
+          ),
           url: '/contactus',
         },
         {
           title: 'Contact Us',
           description: 'We are here to help you with any questions you have',
-          icon: <Mail className='size-5 shrink-0 text-green-200' />,
+          icon: (
+            <Mail
+              className='size-5 shrink-0 stroke-green-400'
+              strokeWidth={2}
+            />
+          ),
           url: '/contactus',
         },
       ],

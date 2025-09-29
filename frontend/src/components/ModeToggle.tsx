@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/hooks/use-theme';
-import type { Theme } from '@/types/theme';
+import type { Theme } from '@/providers/contexts/ThemeContext';
 
 const themes = [
   { label: 'System', value: 'system' as const, icon: Monitor },
@@ -48,8 +48,6 @@ type Props = {
 const ModeToggle = ({ className }: Props) => {
   const { theme, setTheme } = useTheme();
   const buttonRef = useRef<HTMLButtonElement>(null);
-
-  // Simplified dark state detection using actualTheme from context
 
   const getSystemTheme = (): 'light' | 'dark' => {
     return window.matchMedia('(prefers-color-scheme: dark)').matches
