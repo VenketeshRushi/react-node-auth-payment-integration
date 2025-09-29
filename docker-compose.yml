@@ -1,14 +1,9 @@
 version: "3.9"
 
 services:
-  # ========================
-  # Redis
-  # ========================
   redis:
-    container_name: redis
     image: redis:7-alpine
-    command: ["redis-server", "--appendonly", "yes"]
-    restart: unless-stopped
+    container_name: redis
     ports:
       - "6379:6379"
     volumes:
@@ -20,7 +15,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 20s
 
   redis-insight:
     image: redis/redisinsight:latest
@@ -41,19 +35,12 @@ services:
       retries: 5
       start_period: 20s
 
-  # ========================
-  # Backend
-  # ========================
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     container_name: backend
-    restart: unless-stopped
-    env_file:
-      - ./backend/.env.production
     ports:
       - "5000:5000"
+    env_file: ./backend/.env.production
     networks:
       - app-network
     depends_on:
@@ -63,19 +50,12 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 20s
 
-  # ========================
-  # Web (Frontend + NGINX)
-  # ========================
   web:
     build:
       context: .
       dockerfile: frontend/Dockerfile
     container_name: web
-    restart: unless-stopped
-    env_file:
-      - ./frontend/.env.production
     ports:
       - "80:80"
     networks:
@@ -87,18 +67,10 @@ services:
       interval: 60s
       timeout: 10s
       retries: 5
-      start_period: 20s
 
-# ========================
-# Volumes
-# ========================
 volumes:
   redis-data:
-  redisinsight-data:
 
-# ========================
-# Network
-# ========================
 networks:
   app-network:
     driver: bridge

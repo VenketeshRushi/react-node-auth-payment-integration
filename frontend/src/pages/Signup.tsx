@@ -231,7 +231,7 @@ export default function Signup() {
       }
 
       setCurrentStep('verification');
-    } catch (error) {
+    } catch {
       setErrors({ submit: 'Something went wrong. Please try again.' });
     } finally {
       setIsLoading(false);
@@ -257,7 +257,7 @@ export default function Signup() {
           submit: 'Failed to send email verification code. Please try again.',
         });
       }
-    } catch (error) {
+    } catch {
       setErrors({
         submit: 'Failed to send email verification code. Please try again.',
       });
@@ -285,7 +285,7 @@ export default function Signup() {
           submit: 'Failed to send mobile verification code. Please try again.',
         });
       }
-    } catch (error) {
+    } catch {
       setErrors({
         submit: 'Failed to send mobile verification code. Please try again.',
       });
@@ -318,7 +318,7 @@ export default function Signup() {
       } else {
         setErrors({ submit: 'Invalid verification codes. Please try again.' });
       }
-    } catch (error) {
+    } catch {
       setErrors({ submit: 'Verification failed. Please try again.' });
     } finally {
       setIsLoading(false);
@@ -344,7 +344,7 @@ export default function Signup() {
           submit: 'Failed to resend email verification code. Please try again.',
         });
       }
-    } catch (error) {
+    } catch {
       setErrors({
         submit: 'Failed to resend email verification code. Please try again.',
       });
@@ -373,7 +373,7 @@ export default function Signup() {
             'Failed to resend mobile verification code. Please try again.',
         });
       }
-    } catch (error) {
+    } catch {
       setErrors({
         submit: 'Failed to resend mobile verification code. Please try again.',
       });

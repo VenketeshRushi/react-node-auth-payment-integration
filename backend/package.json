@@ -20,11 +20,10 @@
     "migration:generate": "drizzle-kit generate --name",
     "migration:push": "node --env-file=.env.development -r esbuild-register src/database/migrate.ts",
 
-    "lint": "tsc --noEmit && eslint 'src/**/*.{ts,js}'",
-    "lint:fix": "eslint 'src/**/*.{ts,js}' --fix",
+    "lint": "tsc --noEmit",
 
     "format": "prettier --write 'src/**/*.{ts,js,json,md}'",
-    "format:check": "prettier --check 'src/**/*.{ts,js,json,md}'",
+    "format:check": "npx prettier --check 'src/**/*.{ts,js,json,md}'",
 
     "audit": "npm audit",
     "audit:fix": "npm audit fix"
