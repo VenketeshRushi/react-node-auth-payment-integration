@@ -43,7 +43,7 @@ jobs:
         run: npm audit --audit-level=high
 
       - name: Build backend
-        run: npm run build:prod
+        run: npm run build
 
       - name: ✅ Backend build completed
         run: echo "🎉 Backend build completed successfully!"
@@ -81,7 +81,7 @@ jobs:
         run: npm audit --audit-level=high
 
       - name: Build frontend
-        run: npm run build:production
+        run: npm run build
 
       - name: ✅ Frontend build completed
         run: echo "🎉 Frontend build completed successfully!"
