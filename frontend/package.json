@@ -4,13 +4,11 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"clean": "rm -rf dist",
-
 		"build": "npm run build:production",
-		"build:production": "npm run clean && npm run lint && npm run format && tsc -b && vite build --mode production",
+		"build:production": "npm run lint && npm run format && tsc -b && vite build --mode production",
 		
 		"dev": "vite dev --mode development",
-		"build:development": "npm run clean && npm run lint && npm run format && tsc -b && vite build --mode development",
+		"build:development": "npm run lint && npm run format && tsc -b && vite build --mode development",
 
 		"lint": "eslint \"src/**/*.{ts,tsx,js,jsx}\"",
 		"lint:fix": "npx eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix",

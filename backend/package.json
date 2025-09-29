@@ -8,11 +8,9 @@
     "node": ">=22.18.0",
     "npm": ">=11.5.2"
   },
-  "scripts": {
-    "clean": "rm -rf dist",
-    
+  "scripts": {    
     "build": "npm run build:production",
-    "build:production": "npm run clean && tsc --project tsconfig.json",
+    "build:production": "tsc --project tsconfig.json",
     "start:production": "node --env-file=.env.production ./dist/server.js",
 
     "build:development": "tsc --project tsconfig.json",
