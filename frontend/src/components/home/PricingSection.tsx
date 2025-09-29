@@ -81,13 +81,13 @@ const PricingSection = () => {
               key={tier.name}
               className={`relative flex flex-col rounded-3xl p-8 transition-all duration-500 hover:scale-105 min-h-[600px] ${
                 tier.featured
-                  ? 'bg-gradient-to-b from-primary/10 via-purple-500/10 to-pink-500/10 border-2 border-primary/30 shadow-2xl shadow-primary/20 lg:-translate-y-4'
+                  ? 'bg-gradient-to-b from-primary/10 via-primary/10 to-accent/20 border-2 border-primary/30 shadow-2xl shadow-primary/20 lg:-translate-y-4'
                   : 'bg-card/60 backdrop-blur-md border border-border/50 hover:border-border/80 hover:bg-card/80'
               }`}
             >
               {tier.featured && (
                 <div className='absolute -top-6 left-1/2 -translate-x-1/2'>
-                  <div className='rounded-full bg-primary px-6 py-2 text-sm font-semibold text-white shadow-lg'>
+                  <div className='rounded-full bg-primary px-6 py-2 text-sm font-semibold text-primary-foreground shadow-lg'>
                     Most Popular
                   </div>
                 </div>

@@ -8,6 +8,13 @@ import axios, {
 
 const baseURL = import.meta.env.VITE_API_URL;
 
+interface ApiResponse<T = Record<string, unknown>> {
+  success: boolean;
+  message: string;
+  data: T;
+  errorCode?: string;
+}
+
 const commonConfig = {
   baseURL,
   withCredentials: true,
@@ -39,7 +46,7 @@ authAxios.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error: AxiosError) => {
     if (error?.response) {
-      const apiError = error?.response?.data as any;
+      const apiError = error?.response?.data as ApiResponse;
 
       const normalizedError = Object.assign(
         new Error(apiError?.message || 'API Error'),

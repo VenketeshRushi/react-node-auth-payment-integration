@@ -31,7 +31,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import ModeToggle from '@/components/ModeToggle';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 interface MenuItem {
   title: string;
@@ -76,7 +76,7 @@ const Navbar = ({
           icon: (
             <ShoppingCart
               className='size-5 shrink-0 stroke-[#22c55e]'
-              strokeWidth={2} // Adjust stroke thickness
+              strokeWidth={2}
             />
           ),
           url: '/',
@@ -148,7 +148,7 @@ const Navbar = ({
   },
 }: NavbarProps) => {
   return (
-    <nav className='max-w-7xl fixed top-4 mx-auto inset-x-0 z-50 w-[90%] mt-0 px-4 py-4 border rounded-2xl bg-blend-luminosity backdrop-blur-sm shadow-sm bg-background/80 border-border'>
+    <nav className='w-full'>
       {/* Desktop Menu */}
       <div className='hidden justify-between lg:flex lg:flex-1 lg:items-center lg:gap-6 w-full'>
         <div className='flex items-center gap-6'>
@@ -169,7 +169,7 @@ const Navbar = ({
           </NavigationMenu>
         </div>
         <div className='flex gap-2'>
-          <Button asChild variant='default' size='sm'>
+          <Button asChild variant='ghost' size='sm'>
             <Link to={auth.login.url}>{auth.login.title}</Link>
           </Button>
           <Button asChild variant='default' size='sm'>
@@ -226,7 +226,7 @@ const Navbar = ({
                 </Accordion>
                 <div className='flex flex-col gap-4 mb-6'>
                   <SheetClose asChild>
-                    <Button asChild variant='default' size='sm'>
+                    <Button asChild variant='ghost' size='sm'>
                       <Link to={auth.login.url}>{auth.login.title}</Link>
                     </Button>
                   </SheetClose>
@@ -249,10 +249,10 @@ const renderMenuItem = (item: MenuItem) => {
   if (item.items) {
     return (
       <NavigationMenuItem key={item.title}>
-        <NavigationMenuTrigger className='bg-background/70 cursor-pointer font-bold'>
+        <NavigationMenuTrigger className='bg-transparent cursor-pointer font-bold hover:bg-accent'>
           {item.title}
         </NavigationMenuTrigger>
-        <NavigationMenuContent className='bg-background/70 !w-xl'>
+        <NavigationMenuContent className='bg-background/95 backdrop-blur-md !w-xl'>
           {item.items.map(subItem => (
             <NavigationMenuLink asChild key={subItem.title} className='w-50'>
               <SubMenuLink item={subItem} />
@@ -267,7 +267,7 @@ const renderMenuItem = (item: MenuItem) => {
     <NavigationMenuItem key={item.title}>
       <NavigationMenuLink
         href={item.url}
-        className='bg-background/70 group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 transition-colors  font-bold'
+        className='bg-transparent group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 transition-colors font-bold hover:bg-accent hover:text-accent-foreground'
       >
         {item.title}
       </NavigationMenuLink>
@@ -294,17 +294,17 @@ const renderMobileMenuItem = (item: MenuItem) => {
   }
 
   return (
-    <a key={item.title} href={item.url} className='text-md font-semibold'>
+    <NavLink key={item.title} to={item.url} className='text-md font-semibold'>
       {item.title}
-    </a>
+    </NavLink>
   );
 };
 
 const SubMenuLink = ({ item }: { item: MenuItem }) => {
   return (
-    <a
+    <NavLink
       className='hover:bg-muted hover:text-accent-foreground flex select-none flex-row gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors'
-      href={item.url}
+      to={item.url}
     >
       <div className='text-foreground'>{item.icon}</div>
       <div>
@@ -315,7 +315,7 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
           </p>
         )}
       </div>
-    </a>
+    </NavLink>
   );
 };
 

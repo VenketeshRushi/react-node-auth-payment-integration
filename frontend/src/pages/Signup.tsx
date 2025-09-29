@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Shield } from 'lucide-react';
 import Step1BasicInfo from '@/components/signup/Step1BasicInfo';
 import Step2Verification from '@/components/signup/Step2Verification';
-import { signupSchema, otpSchema } from '@/validation/signup.schema';
+import { signupSchema, otpSchema } from '@/validations/signup.schema';
 import { ZodError } from 'zod';
 
 type Step = 'account' | 'verification';
@@ -392,7 +392,7 @@ export default function Signup() {
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center px-4 py-24'>
+    <div className='min-h-screen flex items-center justify-center px-4'>
       <div className='w-full max-w-md'>
         <div className='text-center mb-8'>
           <div className='inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-4'>

@@ -3,7 +3,7 @@ import { ArrowLeft, AlertTriangle } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className='flex flex-1 flex-col items-center justify-center px-6 lg:px-8 py-24'>
+    <div className='flex flex-1 flex-col items-center justify-center px-6 lg:px-8'>
       <div className='flex items-center justify-center w-20 h-20 rounded-full bg-red-100 text-red-500 mb-6 animate-bounce'>
         <AlertTriangle className='w-10 h-10' />
       </div>

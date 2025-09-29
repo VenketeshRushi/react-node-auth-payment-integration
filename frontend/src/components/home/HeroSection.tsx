@@ -36,15 +36,15 @@ const HeroSection = () => {
         </p>
 
         <div className='flex flex-wrap justify-center gap-8 mb-12'>
-          <div className='flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm border border-pr bg-primary-foreground/30 pointer-events-none'>
+          <div className='flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm border border-pr bg-gradient-to-b from-primary/10 via-primary/10 to-accent/20 border-primary/30 pointer-events-none'>
             <Star className='w-5 h-5 fill-yellow-500 text-yellow-500' />
             <span className='text-sm font-medium'>4.9/5 Rating</span>
           </div>
-          <div className='flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm border border-pr bg-primary-foreground/30 pointer-events-none'>
+          <div className='flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm border border-pr bg-gradient-to-b from-primary/10 via-primary/10 to-accent/20 border-primary/30 pointer-events-none'>
             <Users className='w-5 h-5 text-blue-500' />
             <span className='text-sm font-medium'>50K+ Users</span>
           </div>
-          <div className='flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm border border-pr bg-primary-foreground/30 pointer-events-none'>
+          <div className='flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm border border-pr bg-gradient-to-b from-primary/10 via-primary/10 to-accent/20 border-primary/30 pointer-events-none'>
             <Zap className='w-5 h-5 text-blue-600' />
             <span className='text-sm font-medium'>99.9% Uptime</span>
           </div>
