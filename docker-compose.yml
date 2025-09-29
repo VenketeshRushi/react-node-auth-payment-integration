@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   # ========================
   # Redis
@@ -15,10 +17,10 @@ services:
       - app-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 30s # check every 30 seconds
-      timeout: 120s # allow 2 minutes for response
-      retries: 3
-      start_period: 20s # grace period after container starts
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
 
   redis-insight:
     image: redis/redisinsight:latest
@@ -34,9 +36,9 @@ services:
       - redis
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:5540 || exit 1"]
-      interval: 60s # check every 1 minute
-      timeout: 120s # allow 2 minutes
-      retries: 3
+      interval: 60s
+      timeout: 10s
+      retries: 5
       start_period: 20s
 
   # ========================
@@ -58,10 +60,10 @@ services:
       - redis
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
-      interval: 30s # check every 30 seconds
-      timeout: 120s # allow 2 minutes for slow startups
-      retries: 3
-      start_period: 20s # grace period after container starts
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
 
   # ========================
   # Web (Frontend + NGINX)
@@ -82,15 +84,21 @@ services:
       - backend
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
-      interval: 60s # check every 1 minute
-      timeout: 120s # allow 2 minutes
-      retries: 3
+      interval: 60s
+      timeout: 10s
+      retries: 5
       start_period: 20s
 
+# ========================
+# Volumes
+# ========================
 volumes:
   redis-data:
   redisinsight-data:
 
+# ========================
+# Network
+# ========================
 networks:
   app-network:
     driver: bridge

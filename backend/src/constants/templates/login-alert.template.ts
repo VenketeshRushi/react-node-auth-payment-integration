@@ -1,4 +1,4 @@
-import { EmailTemplate } from '../../../../New folder (9)/backend/src/types/email.types.js';
+import { EmailTemplate } from '../../types/email.types.js';
 import { baseStyles } from './baseStyles.js';
 
 export const loginAlertTemplate: EmailTemplate = {

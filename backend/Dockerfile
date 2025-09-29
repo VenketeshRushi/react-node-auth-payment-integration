@@ -9,32 +9,27 @@ RUN apk add --no-cache python3 make g++ bash curl
 # Stage 2: Dependencies
 # ========================
 FROM base AS deps
+
+# Copy package files first to leverage caching
 COPY package*.json tsconfig*.json ./
+
+# Install specific npm version
 RUN npm install -g npm@11.5.2
-# Install all dependencies (dev needed for build)
+
+# Install all dependencies (dev dependencies included for build)
 RUN npm ci
-RUN npm cache clean --force
 
 # ========================
 # Stage 3: Build
 # ========================
 FROM deps AS build
 
-# Copy ALL source files - this was the missing piece!
+# Copy all source files
 COPY . .
 
-# Remove node_modules to avoid conflicts (will be reinstalled in prod stage)
-RUN rm -rf node_modules
-
-# Reinstall dependencies for build
-RUN npm ci
-
-# Run the build
+# Run lint and production build
 RUN npm run lint
-RUN npm run build:prod
-
-# Debug: Show build output
-RUN echo "Build complete. Contents of dist:" && ls -la dist/
+RUN npm run build
 
 # ========================
 # Stage 4: Production
@@ -46,30 +41,24 @@ RUN apk add --no-cache curl
 # Create non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# Copy package.json & install only production deps
+# Copy package.json and lock file
 COPY package*.json ./
 
-# Install npm globally
+# Install only production dependencies
 RUN npm install -g npm@11.5.2
-
-# Install production dependencies
 RUN npm ci --omit=dev --no-optional
-RUN npm cache clean --force
 
 # Copy built files from build stage
 COPY --from=build /usr/src/app/dist ./dist
 
-# Copy environment file (it should be available during build context)
+# Copy environment file
 COPY .env.production ./
-
-# Debug: Verify files in production stage
-RUN echo "Production files:" && ls -la && echo "Dist contents:" && ls -la dist/
 
 # Set permissions
 RUN chown -R appuser:appgroup /usr/src/app
 USER appuser
 
-# Environment
+# Environment variables
 ENV NODE_ENV=production
 ENV PORT=5000
 EXPOSE $PORT
@@ -78,5 +67,5 @@ EXPOSE $PORT
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:$PORT/health || exit 1
 
-# Start app
-CMD ["npm", "run", "start:prod"]
+# Start backend
+CMD ["npm", "run", "start:production"]

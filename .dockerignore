@@ -1,13 +1,36 @@
+# ========================
+# Node modules and build output
+# ========================
 node_modules
 dist
 build
+
+# ========================
+# Git
+# ========================
 .git
 .gitignore
+
+# ========================
+# IDE / Editor files
+# ========================
 .vscode
 .idea
+
+# ========================
+# Docker files
+# ========================
 Dockerfile*
 docker-compose*.yml
+
+# ========================
+# Logs
+# ========================
 *.log
+npm-debug.log*
+
+# ========================
+# Environment files
+# ========================
 .env
 .env.*
-npm-debug.log*

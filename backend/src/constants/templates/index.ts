@@ -1,4 +1,3 @@
-import type { EmailTemplates } from '../../../../New folder (9)/backend/src/types/email.types.js';
 import { verificationTemplate } from './verification.template.js';
 import { resetTemplate } from './reset.template.js';
 import { welcomeTemplate } from './welcome.template.js';
@@ -7,6 +6,7 @@ import { accountLockedTemplate } from './account-locked.template.js';
 import { passwordChangedTemplate } from './password-changed.template.js';
 import { accountActivatedTemplate } from './account-activated.template.js';
 import { sessionExpiryTemplate } from './session-expiry.template.js';
+import { EmailTemplates } from '../../types/email.types.js';
 
 const emailTemplates: EmailTemplates = {
   verification: verificationTemplate,

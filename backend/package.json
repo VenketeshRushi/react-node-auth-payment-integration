@@ -10,17 +10,22 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build:prod": "npm run clean && npm run lint && npm run format && tsc --project tsconfig.json",
-    "start:prod": "node --env-file=.env.production ./dist/server.js",
-    "build:dev": "tsc --project tsconfig.json",
-    "start:dev": "node --env-file=.env.development ./dist/server.js",
+    "build": "npm run build:production",
+    "build:production": "npm run clean && tsc --project tsconfig.json",
+    "start:production": "node --env-file=.env.production ./dist/server.js",
+    "build:development": "tsc --project tsconfig.json",
+    "start:development": "node --env-file=.env.development ./dist/server.js",
     "dev": "node --import=tsx --watch --env-file=.env.development server.ts",
+
     "migration:generate": "drizzle-kit generate --name",
     "migration:push": "node --env-file=.env.development -r esbuild-register src/database/migrate.ts",
-    "lint": "tsc --noEmit",
+
+    "lint": "tsc --noEmit && eslint 'src/**/*.{ts,js}'",
     "lint:fix": "eslint 'src/**/*.{ts,js}' --fix",
+
     "format": "prettier --write 'src/**/*.{ts,js,json,md}'",
     "format:check": "prettier --check 'src/**/*.{ts,js,json,md}'",
+
     "audit": "npm audit",
     "audit:fix": "npm audit fix"
   },
