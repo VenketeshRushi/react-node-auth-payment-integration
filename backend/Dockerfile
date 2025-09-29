@@ -38,7 +38,6 @@ RUN npm ci --omit=dev --no-optional
 
 # Copy built files
 COPY --from=build /usr/src/app/dist ./dist
-COPY .env.production ./
 
 # Set permissions
 RUN chown -R appuser:appgroup /usr/src/app
