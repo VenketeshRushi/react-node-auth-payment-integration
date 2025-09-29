@@ -19,9 +19,6 @@ jobs:
       run:
         working-directory: ./backend
 
-    outputs:
-      backend-artifact-path: ./backend/dist
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -52,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-build
-          path: ./dist
+          path: ./dist   # relative to working-directory ./backend
 
       - name: Backend build completed
         run: echo "Backend build completed successfully!"
@@ -66,9 +63,6 @@ jobs:
     defaults:
       run:
         working-directory: ./frontend
-
-    outputs:
-      frontend-artifact-path: ./frontend/dist
 
     steps:
       - name: Checkout code
@@ -100,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
-          path: ./dist
+          path: ./dist   # relative to working-directory ./frontend
 
       - name: Frontend build completed
         run: echo "Frontend build completed successfully!"
@@ -123,7 +117,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: backend-build
-          path: ./backend/dist
+          path: ./backend   # Download into ./backend folder
 
       # ==============================
       # Download Frontend Artifact
@@ -132,7 +126,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: frontend-build
-          path: ./frontend/dist
+          path: ./frontend   # Download into ./frontend folder
 
       # ==============================
       # DockerHub Login
