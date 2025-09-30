@@ -6,7 +6,7 @@ import axios, {
   type AxiosResponse,
 } from 'axios';
 
-const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = import.meta.env.VITE_API_URL || '/api';
 
 interface ApiResponse<T = Record<string, unknown>> {
   success: boolean;

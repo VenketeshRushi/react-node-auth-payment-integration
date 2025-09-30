@@ -16,9 +16,9 @@ coverage
 *.lcov
 
 # Environment files - keep .env.production for Docker copy
-.env*
-.env.local
-.env.dev
+.env.development
+# .env.local
+# .env.dev
 
 # IDE and editors
 .vscode
