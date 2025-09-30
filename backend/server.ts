@@ -1,10 +1,18 @@
 import app from './src/app.js';
 import { validateEnv } from './src/utils/validateEnv.js';
 import { checkAllConnections } from './src/utils/db/healthCheck.js';
+import dotenv from 'dotenv';
 
-const PORT = Number(process.env.PORT) || 5000;
+dotenv.config({
+  path:
+    process.env.NODE_ENV === 'production'
+      ? '.env.production'
+      : '.env.development',
+});
 
 validateEnv();
+
+const PORT = Number(process.env.PORT) || 5000;
 
 const connectToServices = async (): Promise<boolean> => {
   const maxRetries = 5;

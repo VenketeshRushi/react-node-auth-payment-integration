@@ -8,23 +8,18 @@
     "node": ">=22.18.0",
     "npm": ">=11.5.2"
   },
-  "scripts": {    
+  "scripts": {
     "build": "npm run build:production",
     "build:production": "tsc --project tsconfig.json",
-    "start:production": "node --env-file=.env.production ./dist/server.js",
-
+    "start:production": "node ./dist/server.js",
     "build:development": "tsc --project tsconfig.json",
-    "start:development": "node --env-file=.env.development ./dist/server.js",
-    "dev": "node --import=tsx --watch --env-file=.env.development server.ts",
-
+    "start:development": "node ./dist/server.js",
+    "dev": "tsx --watch server.ts",
     "migration:generate": "drizzle-kit generate --name",
-    "migration:push": "node --env-file=.env.development -r esbuild-register src/database/migrate.ts",
-
+    "migration:push": "node -r esbuild-register src/database/migrate.ts",
     "lint": "tsc --noEmit",
-
     "format": "prettier --write 'src/**/*.{ts,js,json,md}'",
-    "format:check": "npx prettier --check 'src/**/*.{ts,js,json,md}'",
-
+    "format:check": "prettier --check 'src/**/*.{ts,js,json,md}'",
     "audit": "npm audit",
     "audit:fix": "npm audit fix"
   },
@@ -36,6 +31,7 @@
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.5",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
