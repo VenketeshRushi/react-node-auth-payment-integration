@@ -130,10 +130,11 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/myapp-backend:latest ./backend
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/myapp-frontend:latest ./frontend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/node-backend:latest ./backend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest ./frontend
 
       - name: Push Docker images
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/myapp-backend:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/myapp-frontend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/node-backend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
+
