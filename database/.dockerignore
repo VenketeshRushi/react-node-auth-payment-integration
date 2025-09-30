@@ -1,0 +1,56 @@
+# Git
+
+.git
+.gitignore
+.gitattributes
+
+# Environment
+
+.env
+.env.\*
+!.env.example
+
+# Node
+
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Logs
+
+\*.log
+logs/
+
+# OS
+
+.DS_Store
+Thumbs.db
+
+# IDE
+
+.idea
+.vscode
+_.swp
+_.swo
+\*~
+
+# Documentation
+
+README.md
+docs/
+
+# CI/CD
+
+.github
+.gitlab-ci.yml
+
+# Testing
+
+coverage/
+.nyc_output/
+
+# Backup files
+
+_.sql
+_.dump
+backup/

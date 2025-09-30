@@ -1,0 +1,18 @@
+services:
+  backend:
+    image: node-backend:latest
+    build:
+      context: ./backend
+    env_file:
+      - ./backend/.env.production
+    ports:
+      - "5000:5000"
+
+  frontend:
+    image: react-frontend:latest
+    build:
+      context: ./frontend
+    env_file:
+      - ./frontend/.env.production
+    ports:
+      - "80:80"

@@ -29,13 +29,16 @@ WORKDIR /usr/src/app
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+
 # Copy package.json for prod deps
 COPY package*.json ./
 
 # Install only production deps
 RUN npm install -g npm@11.5.2 && npm ci --omit=dev --no-optional
 
-# Copy built files + env
+# Copy built files
 COPY --from=build /usr/src/app/dist ./dist
 
 RUN chown -R appuser:appgroup /usr/src/app

@@ -1,16 +1,19 @@
 import app from './src/app.js';
-import { validateEnv } from './src/utils/validateEnv.js';
+// import { validateEnv } from './src/utils/validateEnv.js';
 import { checkAllConnections } from './src/utils/db/healthCheck.js';
 import dotenv from 'dotenv';
 
-dotenv.config({
-  path:
-    process.env.NODE_ENV === 'production'
-      ? '.env.production'
-      : '.env.development',
-});
+console.log('NODE_ENV:', process.env.NODE_ENV);
 
-validateEnv();
+const envFile =
+  process.env.NODE_ENV === 'production'
+    ? '.env.production'
+    : '.env.development';
+console.log(`Loading environment variables from: ${envFile}`);
+
+dotenv.config({ path: envFile });
+
+// validateEnv();
 
 const PORT = Number(process.env.PORT) || 5000;
 

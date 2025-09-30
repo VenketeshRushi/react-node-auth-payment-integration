@@ -65,7 +65,7 @@ export const validateEnv = (): void => {
     console.error(
       ` Missing required environment variables:\n${missingVars.join('\n')}`
     );
-    // process.exit(1); // Exit immediately if any variable is missing
+    process.exit(1); // Exit immediately if any variable is missing
   }
 
   console.log('All required environment variables are present.');
