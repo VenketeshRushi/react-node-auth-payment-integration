@@ -1,15 +1,19 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Running Postgres dev init script..."
+echo "🚀 Running Postgres initialization script..."
 
 # ----------------------------
-# Required environment variables
+# Use environment variables from docker-compose
 # ----------------------------
-: "${POSTGRES_USER:?POSTGRES_USER must be set}"
-: "${DB_USER:?DB_USER must be set}"
-: "${DB_PASSWORD:?DB_PASSWORD must be set}"
-: "${DB_NAME:?DB_NAME must be set}"
+POSTGRES_USER="${POSTGRES_USER:-postgres}"
+POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-postgres}"
+
+DB_USER="${DB_USER:-devuser}"
+DB_PASSWORD="${DB_PASSWORD:-devpass123}"
+DB_NAME="${DB_NAME:-auth_db}"
+
+export PGPASSWORD="$POSTGRES_PASSWORD"
 
 echo "📋 Configuration:"
 echo "   POSTGRES_USER: $POSTGRES_USER"
@@ -17,18 +21,28 @@ echo "   DB_USER: $DB_USER"
 echo "   DB_NAME: $DB_NAME"
 
 # ----------------------------
-# Create role/user if not exists
+# Wait for Postgres to be ready
 # ----------------------------
-echo "👤 Creating/updating role: $DB_USER..."
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+echo "⏳ Waiting for Postgres to accept connections..."
+until psql -U "$POSTGRES_USER" -d postgres -c '\q' 2>/dev/null; do
+  sleep 1
+done
+echo "✅ Postgres is ready."
+
+# ----------------------------
+# Create or update DB_USER (WITH SUPERUSER - USE WITH CAUTION)
+# ----------------------------
+echo "👤 Creating/updating user: $DB_USER with SUPERUSER privileges..."
+echo "⚠️  WARNING: Granting SUPERUSER privileges. This is a security risk!"
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname postgres <<-EOSQL
 DO \$\$
 BEGIN
    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '$DB_USER') THEN
-      CREATE ROLE $DB_USER WITH LOGIN PASSWORD '$DB_PASSWORD';
-      RAISE NOTICE '✅ Role $DB_USER created.';
+      CREATE ROLE $DB_USER WITH LOGIN PASSWORD '$DB_PASSWORD' SUPERUSER CREATEDB CREATEROLE;
+      RAISE NOTICE '✅ SUPERUSER role $DB_USER created.';
    ELSE
-      ALTER ROLE $DB_USER WITH PASSWORD '$DB_PASSWORD';
-      RAISE NOTICE '✅ Role $DB_USER already exists, password updated.';
+      ALTER ROLE $DB_USER WITH PASSWORD '$DB_PASSWORD' SUPERUSER CREATEDB CREATEROLE;
+      RAISE NOTICE '✅ SUPERUSER role $DB_USER exists, password updated.';
    END IF;
 END
 \$\$;
@@ -38,19 +52,25 @@ EOSQL
 # Create database if not exists
 # ----------------------------
 echo "🗄️  Creating database: $DB_NAME..."
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname postgres <<-EOSQL
 SELECT 'CREATE DATABASE $DB_NAME OWNER $DB_USER'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$DB_NAME')\gexec
 EOSQL
 
 # ----------------------------
-# Grant privileges
+# Grant necessary privileges on the database
 # ----------------------------
-echo "🔐 Granting privileges..."
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+echo "🔐 Granting privileges on $DB_NAME to $DB_USER..."
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DB_NAME" <<-EOSQL
 GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
--- Allow user to connect
-GRANT CONNECT ON DATABASE $DB_NAME TO $DB_USER;
+GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_USER;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USER;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO $DB_USER;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO $DB_USER;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $DB_USER;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO $DB_USER;
 EOSQL
 
 # ----------------------------
@@ -58,88 +78,44 @@ EOSQL
 # ----------------------------
 echo "🔌 Installing extensions..."
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DB_NAME" <<-EOSQL
--- UUID generation
+-- UUID generation (for primary keys)
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
--- Cryptographic functions
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
--- Useful for timestamps
-CREATE EXTENSION IF NOT EXISTS "btree_gist";
 
--- Log enabled extensions
-SELECT extname, extversion FROM pg_extension WHERE extname IN ('uuid-ossp', 'pgcrypto', 'btree_gist');
+-- Log enabled extension
+SELECT extname, extversion 
+FROM pg_extension 
+WHERE extname = 'uuid-ossp';
 EOSQL
 
-# ----------------------------
-# Set default privileges
-# ----------------------------
-echo "🔧 Setting default privileges..."
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DB_NAME" <<-EOSQL
--- Grant privileges on existing schema
-GRANT USAGE, CREATE ON SCHEMA public TO $DB_USER;
 
--- Grant privileges on existing tables
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USER;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO $DB_USER;
-
--- Set default privileges for future objects
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-   GRANT ALL ON TABLES TO $DB_USER;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-   GRANT ALL ON SEQUENCES TO $DB_USER;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-   GRANT EXECUTE ON FUNCTIONS TO $DB_USER;
-EOSQL
-
-# ----------------------------
-# Create helper functions (optional)
-# ----------------------------
-echo "⚙️  Creating helper functions..."
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DB_NAME" <<-EOSQL
--- Function to update 'updated_at' timestamp automatically
-CREATE OR REPLACE FUNCTION trigger_set_timestamp()
-RETURNS TRIGGER AS \$\$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-\$\$ LANGUAGE plpgsql;
-
--- Example: Create a metadata table
-CREATE TABLE IF NOT EXISTS _db_metadata (
-    key VARCHAR(255) PRIMARY KEY,
-    value TEXT,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-
--- Insert init timestamp
-INSERT INTO _db_metadata (key, value)
-VALUES ('initialized_at', NOW()::TEXT)
-ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
-
--- Grant access to metadata table
-GRANT ALL ON TABLE _db_metadata TO $DB_USER;
-EOSQL
 
 # ----------------------------
 # Display summary
 # ----------------------------
 echo ""
-echo "✅ Postgres dev init script completed successfully!"
+echo "✅ Database initialization completed successfully!"
 echo ""
 echo "📊 Database Summary:"
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DB_NAME" <<-EOSQL
-SELECT 
-    'Database: ' || current_database() as info
-UNION ALL
-SELECT 
-    'User: $DB_USER'
-UNION ALL
-SELECT 
-    'Extensions: ' || string_agg(extname, ', ')
-FROM pg_extension
-WHERE extname IN ('uuid-ossp', 'pgcrypto', 'btree_gist');
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DB_NAME" -t <<-EOSQL
+SELECT '  Database: ' || current_database();
+SELECT '  Owner: $DB_USER';
+SELECT '  Extensions: uuid-ossp';
 EOSQL
 
 echo ""
-echo "🎉 Ready to use!"
+echo "🎉 Ready to use! Connection string:"
+echo "   postgresql://$DB_USER:****@localhost:5432/$DB_NAME"
+echo ""
+
+# ----------------------------
+# Verify the user can connect
+# ----------------------------
+echo "🔍 Verifying user credentials..."
+export PGPASSWORD="$DB_PASSWORD"
+if psql -U "$DB_USER" -d "$DB_NAME" -c '\conninfo' 2>/dev/null; then
+    echo "✅ User $DB_USER can connect successfully with provided password"
+else
+    echo "❌ WARNING: User $DB_USER cannot connect with provided password!"
+    echo "   This will cause application connection failures."
+fi
+echo ""

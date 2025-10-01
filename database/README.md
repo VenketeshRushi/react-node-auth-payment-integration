@@ -37,6 +37,9 @@ Local development database setup using Docker Compose with PostgreSQL and Redis.
    docker-compose logs
    ```
 
+**Test Postgres from Windows host:**
+psql -h host.docker.internal -U user -d db
+
 ## 🗄️ Services
 
 ### PostgreSQL
