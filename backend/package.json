@@ -10,14 +10,12 @@
   },
   "scripts": {
     "dev": "node --import=tsx --watch server.ts",
-    "build": "npm run build:production",
-    "build:production": "tsc --project tsconfig.json",
-    "build:development": "tsc --project tsconfig.json",
     "start": "npm run start:production",
+    "build": "npm run build:production",
+    "build:production": "tsc --project tsconfig.json && tsc-alias",
     "start:production": "node ./dist/server.js",
-    "start:development": "node ./dist/server.js",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "node --import=tsx src/config/database/migrate.ts",
+    "db:migrate": "node --import=tsx src/services/database/migrate.ts",
     "db:studio": "drizzle-kit studio",
     "lint": "tsc --noEmit",
     "format": "prettier --write 'src/**/*.{ts,js,json,md}' '*.{ts,js,json,md}'",
@@ -27,9 +25,6 @@
     "audit": "npm audit",
     "audit:fix": "npm audit fix"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
@@ -74,6 +69,7 @@
     "drizzle-kit": "^0.31.4",
     "prettier": "^3.6.2",
     "tsx": "^4.20.5",
+    "tsc-alias": "^1.8.8",
     "typescript": "^5.9.2"
   }
 }

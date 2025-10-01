@@ -1,6 +1,7 @@
+import { config } from '@/config/loadEnv.js';
+import { logger } from '@/config/logger/index.js';
+import { APIError } from '@/utils/apiError.js';
 import nodemailer from 'nodemailer';
-import { config, logger } from '../config/index.js';
-import { APIError } from '../utils/apiError.js';
 
 interface EmailOptions {
   to: string;
@@ -27,7 +28,7 @@ const getTransporter = (): ReturnType<typeof nodemailer.createTransport> => {
   const emailConfig: EmailConfig = {
     host: config.SMTP_HOST,
     port: config.SMTP_PORT,
-    secure: config.SMTP_PORT === 465, // true for 465, false for other ports
+    secure: config.SMTP_PORT === 465,
     auth: {
       user: config.SMTP_USER,
       pass: config.SMTP_PASS,

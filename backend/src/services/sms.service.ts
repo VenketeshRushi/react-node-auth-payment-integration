@@ -1,7 +1,8 @@
+import { config } from '@/config/loadEnv.js';
+import { logger } from '@/config/logger/index.js';
+import { APIError } from '@/utils/apiError.js';
+import { formatPhoneNumber } from '@/utils/ext.js';
 import twilio from 'twilio';
-import { config, logger } from '../config/index.js';
-import { APIError } from '../utils/apiError.js';
-import { formatPhoneNumber } from '../utils/validations/mobile.utils.js';
 
 interface SMSOptions {
   to: string;

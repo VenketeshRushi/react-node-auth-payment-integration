@@ -1,33 +1,23 @@
 import type { Request, Response, NextFunction } from 'express';
-import { delKey, getKey, setKey } from '../config/redis/redis.utils.js';
-import { sendSuccessResponse } from '../utils/http/responses.utils.js';
-import { logger } from '../config/index.js';
+import { delKey, getKey, setKey } from '@/services/redis/utils.js';
+import { logger } from '@/config/logger/index.js';
+import { sendSuccessResponse } from '@/utils/response.utils.js';
 
 interface CacheOptions {
-  prefix: string; // Prefix to group cache keys
-  ttl?: number; // Time-to-live in seconds
-  keyBuilder?: (req: Request) => string; // Custom cache key generator
+  prefix: string;
+  ttl?: number;
+  keyBuilder?: (req: Request) => string;
 }
 
-/**
- * @description Middleware to cache GET requests using Redis
- * Automatically returns cached responses and saves new responses to cache
- */
 export const cacheMiddleware = (options: CacheOptions) => {
   const { prefix, ttl = 60, keyBuilder } = options;
 
-  return async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response | void> => {
-    try {
-      // 1. Generate cache key
-      const cacheKey = `${prefix}:${
-        keyBuilder ? keyBuilder(req) : req.originalUrl
-      }`;
+  return async (req: Request, res: Response, next: NextFunction) => {
+    if (req.method !== 'GET') return next();
 
-      // 2. Check if response is already cached
+    const cacheKey = `${prefix}:${keyBuilder ? keyBuilder(req) : req.originalUrl}`;
+
+    try {
       const cachedData = await getKey(cacheKey);
       if (cachedData) {
         logger.info(`Cache hit: ${cacheKey}`);
@@ -41,21 +31,27 @@ export const cacheMiddleware = (options: CacheOptions) => {
 
       logger.info(`Cache miss: ${cacheKey}`);
 
-      /**
-       * 3. Monkey-patch res.sendSuccessResponse so it also caches the response
-       */
-      const originalSend = sendSuccessResponse;
-      (res as any).sendSuccessResponse = (
-        statusCode = 200,
-        message = 'Request successful',
-        data = {}
-      ) => {
-        // Save to cache (fire and forget)
-        setKey(cacheKey, JSON.stringify(data), ttl).catch(err =>
-          logger.error('Cache save failed:', err)
-        );
+      // Patch res.json to cache the response
+      const originalJson = res.json.bind(res);
 
-        return originalSend(res, statusCode, message, data);
+      res.json = (body: any) => {
+        setKey(cacheKey, JSON.stringify(body), ttl).catch(err =>
+          logger.error(`Failed to cache response for key ${cacheKey}:`, err)
+        );
+        return originalJson(body);
+      };
+
+      // Patch sendSuccessResponse to cache automatically
+      const originalSendSuccess = sendSuccessResponse.bind(null, res);
+      (res as any).sendSuccessResponse = <T = Record<string, any>>(
+        statusCode?: number,
+        message?: string,
+        data?: T
+      ) => {
+        setKey(cacheKey, JSON.stringify(data), ttl).catch(err =>
+          logger.error(`Failed to cache response for key ${cacheKey}:`, err)
+        );
+        return originalSendSuccess(statusCode, message, data);
       };
 
       next();
@@ -66,9 +62,7 @@ export const cacheMiddleware = (options: CacheOptions) => {
   };
 };
 
-/**
- * @description Utility to clear cache by prefix and key
- */
+// Clear cache by prefix:key
 export const clearCache = async (
   prefix: string,
   key: string

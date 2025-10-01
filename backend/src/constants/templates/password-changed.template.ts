@@ -1,4 +1,4 @@
-import { EmailTemplate } from '../../types/email.types.js';
+import { EmailTemplate } from '@/types/emailTemplate.js';
 import { baseStyles } from './baseStyles.js';
 
 export const passwordChangedTemplate: EmailTemplate = {

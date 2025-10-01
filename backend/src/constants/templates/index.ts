@@ -6,7 +6,7 @@ import { accountLockedTemplate } from './account-locked.template.js';
 import { passwordChangedTemplate } from './password-changed.template.js';
 import { accountActivatedTemplate } from './account-activated.template.js';
 import { sessionExpiryTemplate } from './session-expiry.template.js';
-import { EmailTemplates } from '../../types/email.types.js';
+import { EmailTemplates } from '@/types/emailTemplate.js';
 
 const emailTemplates: EmailTemplates = {
   verification: verificationTemplate,

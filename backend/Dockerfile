@@ -1,29 +1,26 @@
 # ==========================
-# Stage 1: Base
+# Stage 1: Build
 # ==========================
-FROM node:22-alpine AS base
+FROM node:22-alpine AS build
+
 WORKDIR /usr/src/app
+
+# Install build dependencies
 RUN apk add --no-cache python3 make g++ bash curl
 
-# ==========================
-# Stage 2: Dependencies
-# ==========================
-FROM base AS deps
+# Copy package files and install dependencies
 COPY package*.json tsconfig*.json ./
-RUN npm install -g npm@11.5.2
 RUN npm ci
 
-# ==========================
-# Stage 3: Build
-# ==========================
-FROM deps AS build
+# Copy source code and build the application
 COPY . .
 RUN npm run build
 
 # ==========================
-# Stage 4: Production
+# Stage 2: Production
 # ==========================
 FROM node:22-alpine AS prod
+
 WORKDIR /usr/src/app
 
 # Create non-root user
@@ -32,16 +29,13 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 # Install curl for healthcheck
 RUN apk add --no-cache curl
 
-# Copy package.json for prod deps
+# Copy only production dependencies and built files
 COPY package*.json ./
+RUN npm ci --omit=dev --no-optional && npm cache clean --force
 
-# Install only production dependencies
-RUN npm install -g npm@11.5.2 && npm ci --omit=dev --no-optional
-
-# Copy built files from build stage
 COPY --from=build /usr/src/app/dist ./dist
 
-# Set ownership and switch to non-root user
+# Set ownership and switch user
 RUN chown -R appuser:appgroup /usr/src/app
 USER appuser
 
