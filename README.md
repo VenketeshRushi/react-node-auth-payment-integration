@@ -18,7 +18,7 @@ project-root/
 │
 ├── docker-compose.yml
 │
-├── databse/
+├── database/
 │   ├── docker-compose.yml
 │   └── .env      # databse-specific env vars
 │
