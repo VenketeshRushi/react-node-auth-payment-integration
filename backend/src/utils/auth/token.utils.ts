@@ -3,10 +3,9 @@ import jwt, {
   type VerifyOptions,
   type JwtPayload,
 } from 'jsonwebtoken';
-import { config } from '../../config/config.js';
+import { config, logger } from '../../config/index.js';
 import { APIError } from '../apiError.js';
 import { generateSecureRandom } from '../crypto/generators.utils.js';
-import { logger } from '../logger.js';
 
 interface TokenPayload {
   id: string | number;

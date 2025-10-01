@@ -1,25 +1,25 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { logger } from '../utils/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load env variables (only console here, no logger to avoid circular deps)
 if (process.env.NODE_ENV !== 'production') {
   const result = dotenv.config({
     path: path.resolve(__dirname, '../../.env.development'),
   });
   if (result.error) {
-    logger.error('Error loading .env.development:', result.error.message);
+    console.error('Error loading .env.development:', result.error.message);
     process.exit(1);
   }
-  logger.info(
-    `Loaded ${Object.keys(result.parsed || {}).length} variables from .env.development`
+  console.log(
+    `Loaded ${Object.keys(result.parsed || {}).length} env variables from .env.development`
   );
 } else {
-  logger.info(
-    'Production mode: environment variables are injected via Docker or cloud platform'
+  console.log(
+    'Production mode: env variables are injected from docker/kubernetes or cloud platform'
   );
 }
 

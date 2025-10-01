@@ -6,13 +6,12 @@ import path from 'path';
 import compression from 'compression';
 import fs from 'fs';
 
-import { config } from './config/config.js';
-import { logger } from './utils/logger.js';
-import { getHealthStatus } from './utils/db/healthCheck.js';
 import { setupSwagger } from './config/swagger/swagger.config.js';
+import { config, logger } from './config/index.js';
 import { httpLogger } from './middlewares/httpLogger.middleware.js';
 import { sendSuccessResponse } from './utils/http/responses.utils.js';
 import { errorHandlerMiddleware } from './middlewares/error.middleware.js';
+import { getHealthStatus } from './utils/db/healthCheck.js';
 import authRoutes from './modules/auth/routes/auth.route.js';
 
 const app = express();

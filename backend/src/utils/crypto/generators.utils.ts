@@ -1,6 +1,6 @@
 import crypto from 'crypto';
-import { logger } from '../logger.js';
 import { APIError } from '../apiError.js';
+import { logger } from '../../config/index.js';
 
 // Generate UUID v4
 export const generateUUID = (): string => {

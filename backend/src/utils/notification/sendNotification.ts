@@ -2,7 +2,7 @@ import { sendEmail } from '../../services/email.service.js';
 import { sendSMS } from '../../services/sms.service.js';
 import { getEmailTemplate } from '../../constants/templates/index.js';
 import { APIError } from '../apiError.js';
-import { logger } from '../logger.js';
+import { logger } from '../../config/index.js';
 
 export const sendVerificationNotifications = (
   email: string,

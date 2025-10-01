@@ -1,5 +1,5 @@
 import { PoolConfig } from 'pg';
-import { config } from '../config.js';
+import { config } from '../index.js';
 
 export const databaseConfig: PoolConfig = {
   host: config.DB_HOST,

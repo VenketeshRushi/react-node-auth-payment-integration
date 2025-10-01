@@ -1,7 +1,6 @@
 import twilio from 'twilio';
-import { config } from '../config/config.js';
+import { config, logger } from '../config/index.js';
 import { APIError } from '../utils/apiError.js';
-import { logger } from '../utils/logger.js';
 import { formatPhoneNumber } from '../utils/validations/mobile.utils.js';
 
 interface SMSOptions {
