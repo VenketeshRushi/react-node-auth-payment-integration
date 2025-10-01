@@ -3,6 +3,7 @@ import jwt, {
   type VerifyOptions,
   type JwtPayload,
 } from 'jsonwebtoken';
+import { config } from '../../config/config.js';
 import { APIError } from '../apiError.js';
 import { generateSecureRandom } from '../crypto/generators.utils.js';
 import { logger } from '../logger.js';
@@ -25,15 +26,15 @@ export const signAccessToken = (
       throw new APIError('User ID is required in token payload', 400);
     }
 
-    const secret = process.env.JWT_SECRET;
+    const secret = config.JWT_SECRET;
     if (!secret) {
       throw new APIError('JWT secret is not configured', 500);
     }
 
     const defaultOptions: SignOptions = {
-      issuer: process.env.JWT_ISSUER,
-      audience: process.env.JWT_AUDIENCE,
-      expiresIn: Number(process.env.JWT_ACCESS_EXPIRES_IN) || 3600,
+      issuer: config.JWT_ISSUER,
+      audience: config.JWT_AUDIENCE,
+      expiresIn: config.JWT_ACCESS_EXPIRES_IN,
       algorithm: 'HS256',
       jwtid: generateSecureRandom(16),
       subject: String(payload.id),
@@ -63,7 +64,7 @@ export const signAccessToken = (
 
 export const signRefreshToken = (): string => {
   try {
-    return generateSecureRandom(64); // 64-byte refresh token
+    return generateSecureRandom(64);
   } catch (error) {
     logger.error('Refresh token generation failed:', error);
     throw new APIError('Failed to generate refresh token', 500);
@@ -79,14 +80,14 @@ export const verifyJwtToken = (
       throw new APIError('Token is required for verification', 400);
     }
 
-    const secret = process.env.JWT_SECRET;
+    const secret = config.JWT_SECRET;
     if (!secret) {
       throw new APIError('JWT secret is not configured', 500);
     }
 
     const defaultOptions: VerifyOptions = {
-      issuer: process.env.JWT_ISSUER,
-      audience: process.env.JWT_AUDIENCE,
+      issuer: config.JWT_ISSUER,
+      audience: config.JWT_AUDIENCE,
       algorithms: ['HS256'],
     };
 

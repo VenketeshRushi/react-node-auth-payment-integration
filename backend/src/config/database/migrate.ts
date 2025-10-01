@@ -1,12 +1,13 @@
 import pg from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import { config } from '../config.js';
 
 const { Client } = pg;
 
 const runMigrations = async () => {
   const client = new Client({
-    connectionString: String(process.env.DATABASE_URL),
+    connectionString: config.DATABASE_URL,
   });
 
   try {
@@ -20,9 +21,9 @@ const runMigrations = async () => {
       migrationsFolder: 'src/database/migrations',
     });
 
-    console.log('✅ Migrations completed successfully!');
+    console.log('Migrations completed successfully!');
   } catch (error) {
-    console.error('❌ Migration failed:', error);
+    console.error('Migration failed:', error);
     process.exit(1);
   } finally {
     console.log('Closing PostgreSQL client...');

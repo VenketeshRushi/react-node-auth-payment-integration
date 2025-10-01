@@ -3,6 +3,7 @@ import type { Options } from 'swagger-jsdoc';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { serve, setup } from 'swagger-ui-express';
 import path from 'path';
+import { config } from '../../config/config.js';
 import { logger } from '../../utils/logger.js';
 
 const swaggerConfig: Options = {
@@ -20,12 +21,11 @@ const swaggerConfig: Options = {
     },
     servers: [
       {
-        url: process.env.BACKEND_URL || 'http://localhost:8000',
-        description: 'Development server',
-      },
-      {
-        url: 'https://api.yourdomain.com',
-        description: 'Production server',
+        url: config.BACKEND_URL,
+        description:
+          config.NODE_ENV === 'production'
+            ? 'Production server'
+            : 'Development server',
       },
     ],
     components: {
@@ -45,12 +45,14 @@ const swaggerConfig: Options = {
   },
   // Load YAML schemas and route files
   apis: [
-    path.resolve(process.cwd(), 'src/routes/*.ts'),
-    path.resolve(process.cwd(), 'src/routes/**/*.ts'),
-    path.resolve(process.cwd(), 'src/integrations/swagger/schemas/*.yaml'),
-    // Also include compiled JS files for production
-    path.resolve(process.cwd(), 'dist/routes/*.js'),
-    path.resolve(process.cwd(), 'dist/routes/**/*.js'),
+    // TypeScript route files (development)
+    path.resolve(process.cwd(), 'src/modules/*/routes/*.ts'),
+
+    // YAML schema files
+    path.resolve(process.cwd(), 'src/config/swagger/schemas/*.yaml'),
+
+    // Compiled JavaScript files (production)
+    path.resolve(process.cwd(), 'dist/modules/*/routes/*.js'),
   ],
 };
 
@@ -78,11 +80,12 @@ export const setupSwagger = (app: Express): void => {
       })
     );
 
-    // JSON endpoint for the raw spec
     app.get('/api-docs.json', (_req, res) => {
       res.setHeader('Content-Type', 'application/json');
       res.send(swaggerSpec);
     });
+
+    logger.info('Swagger documentation setup successful at /api-docs');
   } catch (error) {
     logger.error('Failed to setup Swagger documentation', { error });
   }

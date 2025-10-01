@@ -6,6 +6,7 @@ import path from 'path';
 import compression from 'compression';
 import fs from 'fs';
 
+import { config } from './config/config.js';
 import { logger } from './utils/logger.js';
 import { getHealthStatus } from './utils/db/healthCheck.js';
 import { setupSwagger } from './config/swagger/swagger.config.js';
@@ -41,7 +42,7 @@ app.use(
 );
 
 // Helmet for Security
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = config.NODE_ENV === 'production';
 
 if (isProduction) {
   app.use(
@@ -52,7 +53,7 @@ if (isProduction) {
           scriptSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           imgSrc: ["'self'", 'data:', 'https:'],
-          connectSrc: ["'self'", String(process.env.FRONTEND_URL), 'wss:'],
+          connectSrc: ["'self'", config.FRONTEND_URL, 'wss:'],
           fontSrc: ["'self'", 'https:', 'data:'],
           objectSrc: ["'none'"],
           frameSrc: ["'none'"],
@@ -95,11 +96,11 @@ app.use(
   })
 );
 
-app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(cookieParser());
 
 const allowedOrigins: string[] = [
-  process.env.ALLOWED_ORIGIN || '',
-  process.env.FRONTEND_URL || '',
+  config.ALLOWED_ORIGIN,
+  config.FRONTEND_URL,
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:3000',
@@ -173,8 +174,7 @@ app.get('/health', async (_req: Request, res: Response) => {
     const response = {
       name: 'Genie Backend Service',
       message: 'Backend APIs is running now 👍',
-      version: process.env.npm_package_version || '1.0.0',
-      environment: process.env.NODE_ENV || 'development',
+      environment: config.NODE_ENV,
       timestamp: new Date().toISOString(),
       health,
       endpoints: {

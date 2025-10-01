@@ -1,16 +1,16 @@
 import { pool } from '../../config/database/index.js';
 import { redisClient } from '../../config/redis/client.js';
+import { config } from '../../config/config.js';
 import { logger } from '../logger.js';
 
 const checkDbConnection = async (): Promise<boolean> => {
   let client;
   try {
-    // Get a client from the pool
     client = await pool.connect();
 
-    // Execute a simple query
-    const result = await client.query('SELECT 1 as test');
-
+    const result = await client.query(
+      'SELECT NOW(), current_database(), current_user'
+    );
     logger.info('Database connection successful', {
       result: result.rows[0],
     });
@@ -22,10 +22,9 @@ const checkDbConnection = async (): Promise<boolean> => {
       code: error?.code,
       detail: error?.detail,
       hint: error?.hint,
-      stack: process.env.NODE_ENV === 'development' ? error?.stack : undefined,
+      stack: config.NODE_ENV === 'development' ? error?.stack : undefined,
     });
 
-    // Log specific error types for debugging
     if (error?.code === 'ECONNREFUSED') {
       logger.error(
         'Connection refused - PostgreSQL may not be running or host/port is incorrect'
@@ -42,6 +41,7 @@ const checkDbConnection = async (): Promise<boolean> => {
   } finally {
     // Always release the client back to the pool
     if (client) {
+      logger.info('Releasing PostgreSQL client back to pool');
       client.release();
     }
   }
@@ -62,7 +62,7 @@ const checkRedisConnection = async (): Promise<boolean> => {
     logger.error('Redis connection failed', {
       message: error?.message,
       code: error?.code,
-      stack: process.env.NODE_ENV === 'development' ? error?.stack : undefined,
+      stack: config.NODE_ENV === 'development' ? error?.stack : undefined,
     });
     return false;
   }

@@ -1,4 +1,5 @@
 import twilio from 'twilio';
+import { config } from '../config/config.js';
 import { APIError } from '../utils/apiError.js';
 import { logger } from '../utils/logger.js';
 import { formatPhoneNumber } from '../utils/validations/mobile.utils.js';
@@ -15,17 +16,17 @@ interface SMSConfig {
 }
 
 const getSMSConfig = (): SMSConfig => {
-  const config = {
-    accountSid: process.env.TWILIO_ACCOUNT_SID || '',
-    authToken: process.env.TWILIO_AUTH_TOKEN || '',
-    fromPhone: process.env.TWILIO_PHONE_NUMBER || '',
+  const smsConfig = {
+    accountSid: config.TWILIO_ACCOUNT_SID,
+    authToken: config.TWILIO_AUTH_TOKEN,
+    fromPhone: config.TWILIO_PHONE_NUMBER,
   };
 
-  if (!config.accountSid || !config.authToken || !config.fromPhone) {
+  if (!smsConfig.accountSid || !smsConfig.authToken || !smsConfig.fromPhone) {
     throw new APIError('Twilio configuration missing', 500);
   }
 
-  return config;
+  return smsConfig;
 };
 
 // Lazy initialization - don't create client until first use
@@ -33,20 +34,20 @@ let client: ReturnType<typeof twilio> | null = null;
 
 const getClient = () => {
   if (!client) {
-    const config = getSMSConfig();
-    client = twilio(config.accountSid, config.authToken);
+    const smsConfig = getSMSConfig();
+    client = twilio(smsConfig.accountSid, smsConfig.authToken);
   }
   return client;
 };
 
 export const sendSMS = async (options: SMSOptions) => {
   try {
-    const config = getSMSConfig();
+    const smsConfig = getSMSConfig();
     const twilioClient = getClient();
 
     const message = await twilioClient.messages.create({
       body: options.message,
-      from: config.fromPhone,
+      from: smsConfig.fromPhone,
       to: formatPhoneNumber(options.to),
     });
 

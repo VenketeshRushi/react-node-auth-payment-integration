@@ -1,5 +1,6 @@
 import winston from 'winston';
 import 'winston-daily-rotate-file';
+import { config } from '../config/config.js';
 
 const logLevels = {
   error: 0,
@@ -45,9 +46,8 @@ const accessTransport = new winston.transports.DailyRotateFile({
   zippedArchive: true,
 });
 
-// Create Winston logger
 export const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'debug', // use debug so http logs are included
+  level: config.LOG_LEVEL, // use configured log level (defaults to 'info')
   levels: logLevels,
   format: winston.format.combine(
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
@@ -57,10 +57,9 @@ export const logger = winston.createLogger({
   transports: [errorTransport, combinedTransport, accessTransport],
 });
 
-// Console logging for all environments (dev + prod) with colors
 logger.add(
   new winston.transports.Console({
-    level: 'debug', // always log everything to console
+    level: config.LOG_LEVEL, // use configured log level
     format: winston.format.combine(
       winston.format.colorize({ all: true }),
       winston.format.printf(

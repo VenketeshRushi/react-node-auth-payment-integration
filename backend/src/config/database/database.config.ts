@@ -1,14 +1,12 @@
-import { configDotenv } from 'dotenv';
 import { PoolConfig } from 'pg';
-
-configDotenv();
+import { config } from '../config.js';
 
 export const databaseConfig: PoolConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432', 10),
-  user: process.env.DB_USER || 'devuser',
-  password: process.env.DB_PASSWORD || 'devpass123',
-  database: process.env.DB_NAME || 'auth_db',
+  host: config.DB_HOST,
+  port: config.DB_PORT,
+  user: config.DB_USER,
+  password: config.DB_PASSWORD,
+  database: config.DB_NAME,
 
   // Pool configuration
   max: 20, // Maximum connections in pool
@@ -17,7 +15,7 @@ export const databaseConfig: PoolConfig = {
 
   // SSL config (disable in dev, enable in prod)
   ssl:
-    process.env.NODE_ENV === 'production'
+    config.NODE_ENV === 'production'
       ? { rejectUnauthorized: false }
       : undefined, // use undefined instead of false for PoolConfig type safety
 
