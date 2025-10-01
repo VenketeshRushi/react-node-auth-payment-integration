@@ -1,40 +1,28 @@
-import app from './src/app.js';
-import { checkAllConnections } from './src/utils/db/healthCheck.js';
-import { config, logger } from './src/config/index.js';
+import app from '@/app.js';
+import { config } from '@/config/loadEnv.js';
+import { checkAllConnections } from '@/utils/healthCheck.js';
 
 const { PORT, NODE_ENV, HOST } = config;
 
 const connectToServices = async (): Promise<boolean> => {
   const maxRetries = 5;
-  const retryDelay = 3000; // 3s per attempt
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    logger.info(`Connecting to services... (${attempt}/${maxRetries})`);
-
     try {
       const result = await checkAllConnections();
       const failedServices = Object.entries(result)
         .filter(([_, ok]) => !ok)
         .map(([name]) => name);
 
-      if (failedServices.length === 0) {
-        logger.info('✅ All services connected successfully');
-        return true;
-      } else {
-        logger.error(`❌ Failed to connect: ${failedServices.join(', ')}`);
-      }
-    } catch (error: any) {
-      logger.error(
-        `❌ Attempt ${attempt} failed: ${error?.message || 'Unknown error'}`
-      );
+      if (failedServices.length === 0) return true;
+
+      console.error(`Failed services: ${failedServices.join(', ')}`);
+    } catch (err: any) {
+      console.error(`Connection attempt ${attempt} failed: ${err?.message}`);
     }
 
     if (attempt < maxRetries) {
-      logger.info(`🔄 Retrying in ${retryDelay / 1000}s...`);
-      await new Promise(resolve => setTimeout(resolve, retryDelay));
-    } else {
-      logger.error('❌ All attempts exhausted. Shutting down.');
-      return false;
+      await new Promise(r => setTimeout(r, Math.min(3000 * attempt, 15000)));
     }
   }
 
@@ -42,65 +30,41 @@ const connectToServices = async (): Promise<boolean> => {
 };
 
 const startServer = async () => {
-  logger.info(`🚀 Starting server in ${NODE_ENV} mode...`);
-
-  const servicesOk = await connectToServices();
-  if (!servicesOk) {
-    logger.error('❌ Could not connect to services. Exiting.');
+  const ok = await connectToServices();
+  if (!ok) {
+    console.error('Could not connect to services. Exiting.');
     process.exit(1);
   }
 
   const server = app.listen(PORT, HOST, () => {
-    logger.info('✅ Server started successfully', {
-      url: `http://${HOST}:${PORT}`,
-      health: `http://${HOST}:${PORT}/health`,
-      apiDocs: `http://${HOST}:${PORT}/api-docs`,
-      environment: NODE_ENV,
-    });
+    console.log(`Server running at http://${HOST}:${PORT} [${NODE_ENV}]`);
   });
 
   server.timeout = 30000;
 
   const shutdown = (signal: string) => {
-    logger.warn(`⚠️ ${signal} received - shutting down gracefully...`);
-    server.close((err: Error | undefined) => {
-      if (err) {
-        logger.error('❌ Error during shutdown', { error: err });
-        process.exit(1);
-      }
-      logger.info('✅ Server closed successfully');
-      process.exit(0);
-    });
-
-    setTimeout(() => {
-      logger.error('⏱️ Force shutdown due to timeout');
-      process.exit(1);
-    }, 10000);
+    console.warn(`${signal} received, shutting down...`);
+    server.close(() => process.exit(0));
+    setTimeout(() => process.exit(1), 10000);
   };
 
   process.on('SIGINT', () => shutdown('SIGINT'));
   process.on('SIGTERM', () => shutdown('SIGTERM'));
-  process.on('unhandledRejection', (reason, promise) =>
-    logger.error('❌ Unhandled Rejection', { promise, reason })
+  process.on('unhandledRejection', reason =>
+    console.error('Unhandled Rejection', reason)
   );
   process.on('uncaughtException', err =>
-    logger.error('❌ Uncaught Exception', { error: err })
-  );
-  process.on('warning', warning =>
-    logger.warn('⚠️ Process warning', {
-      name: warning.name,
-      message: warning.message,
-    })
+    console.error('Uncaught Exception', err)
   );
 
-  logger.info('═══════════════════════════════════════');
-  logger.info('🚀 Backend Server Starting...');
-  logger.info('═══════════════════════════════════════');
-  logger.info(`📅 Started at: ${new Date().toISOString()}`);
-  logger.info(`⚙️ Node.js version: ${process.version}`);
-  logger.info(`📁 Working directory: ${process.cwd()}`);
-  logger.info(`🌍 Environment: ${NODE_ENV}`);
-  logger.info('═══════════════════════════════════════\n');
+  console.log('═══════════════════════════════════════');
+  console.log('Backend Server:');
+  console.log('═══════════════════════════════════════');
+  console.log(`Started at: ${new Date().toISOString()}`);
+  console.log(`Node.js version: ${process.version}`);
+  console.log(`Working directory: ${process.cwd()}`);
+  console.log(`Environment: ${NODE_ENV}`);
+  console.log('═══════════════════════════════════════\n');
 };
 
 startServer();

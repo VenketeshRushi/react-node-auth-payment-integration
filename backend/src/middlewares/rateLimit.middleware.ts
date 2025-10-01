@@ -1,9 +1,8 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { RateLimitOptions } from '../types/rateLimit.types.js';
-import { sendErrorResponse } from '../utils/http/responses.utils.js';
-import { getKey, incrKey, setKey } from '../config/redis/redis.utils.js';
-import { extractIpAddress } from '../utils/http/ip.utils.js';
-import { logger } from '../config/index.js';
+import { RateLimitOptions } from '@/types/rateLimit.js';
+import { getKey, incrKey, setKey } from '@/services/redis/utils.js';
+import { sendErrorResponse } from '@/utils/response.utils.js';
+import { logger } from '@/config/logger/index.js';
 
 /**
  * @description Middleware to enforce API rate limiting per machine/user
@@ -45,7 +44,7 @@ export const rateLimitMiddleware =
         rateLimitKey = `${prefix}:machineId:${machineId}:${req.path}`;
       } else {
         // Fall back to IP-based limiting when machine ID not required/available
-        const clientIp = extractIpAddress(req);
+        const clientIp = req.ip || req.socket.remoteAddress;
         rateLimitKey = `${prefix}:ip:${clientIp}:${req.path}`;
       }
 
@@ -64,7 +63,7 @@ export const rateLimitMiddleware =
 
       // Rate limit exceeded
       logger.warn('Rate limit exceeded', {
-        ip: extractIpAddress(req),
+        ip: req.ip || req.socket.remoteAddress,
         machineId: req.headers['x-machine-id'] || null,
         path: req.path,
         limit,

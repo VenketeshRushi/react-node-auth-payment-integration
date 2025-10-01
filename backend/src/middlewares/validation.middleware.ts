@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { ZodType } from 'zod';
 import { ZodError } from 'zod';
-import { sendErrorResponse } from '../utils/http/responses.utils.js';
+import type { ZodType } from 'zod';
+import { sendErrorResponse } from '@/utils/response.utils.js';
 
 type SchemaMap = {
   body?: ZodType<any, any>;

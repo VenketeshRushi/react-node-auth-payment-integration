@@ -1,39 +1,36 @@
-# Git
 .git
 .gitignore
 .gitattributes
 
-# IDE
 .vscode
 .idea
-*.swp
-*.swo
-*~
+_.swp
+_.swo
+\*~
 .DS_Store
 
-# Documentation
-*.md
+\*.md
 README.md
 CHANGELOG.md
 
-# Testing
 coverage
-.nyc_output
+.nyc*output
 *.test.ts
-*.spec.ts
-__tests__
-__mocks__
+\_.spec.ts
+**/tests
+**/mocks
 
-# Logs
 logs
-*.log
+\*.log
 
-# Temporary files
 tmp
 temp
 .cache
 
-# Docker
 Dockerfile*
 docker-compose*.yml
 .dockerignore
+
+node_modules
+scripts
+.env.development

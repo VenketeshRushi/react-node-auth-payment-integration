@@ -5,14 +5,17 @@ import helmet from 'helmet';
 import path from 'path';
 import compression from 'compression';
 import fs from 'fs';
-
-import { setupSwagger } from './config/swagger/swagger.config.js';
-import { config, logger } from './config/index.js';
-import { httpLogger } from './middlewares/httpLogger.middleware.js';
-import { sendSuccessResponse } from './utils/http/responses.utils.js';
-import { errorHandlerMiddleware } from './middlewares/error.middleware.js';
-import { getHealthStatus } from './utils/db/healthCheck.js';
-import authRoutes from './modules/auth/routes/auth.route.js';
+import { logger } from './config/logger/index.js';
+import { config } from './config/loadEnv.js';
+import { setupSwagger } from './docs/swagger/swagger.config.js';
+import { requestLogger } from './middlewares/requestLogger.js';
+import { getHealthStatus } from './utils/healthCheck.js';
+import {
+  sendSuccessResponse,
+  sendErrorResponse,
+} from './utils/response.utils.js';
+import { errorHandlerMiddleware } from './middlewares/errorHandler.js';
+import authRouter from './modules/auth/auth.route.js';
 
 const app = express();
 
@@ -26,21 +29,19 @@ if (!fs.existsSync(logsDir)) {
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
 
-// response compression
+// Response compression
 app.use(
   compression({
     level: 6,
     threshold: 1024,
     filter: (req, res) => {
-      if (req.headers['x-no-compression']) {
-        return false;
-      }
+      if (req.headers['x-no-compression']) return false;
       return compression.filter(req, res);
     },
   })
 );
 
-// Helmet for Security
+// Helmet for security
 const isProduction = config.NODE_ENV === 'production';
 
 if (isProduction) {
@@ -59,11 +60,7 @@ if (isProduction) {
         },
       },
       crossOriginEmbedderPolicy: false,
-      hsts: {
-        maxAge: 31536000,
-        includeSubDomains: true,
-        preload: true,
-      },
+      hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
     })
   );
 } else {
@@ -76,13 +73,12 @@ if (isProduction) {
   );
 }
 
-// Body Parsing with rate limiting considerations
+// Body parsing
 app.use(
   express.json({
     limit: '10mb',
     verify: (req, _res, buf) => {
-      // Store raw body for webhook verification if needed
-      (req as any).rawBody = buf;
+      (req as any).rawBody = buf; // needed for webhooks
     },
   })
 );
@@ -107,36 +103,16 @@ const allowedOrigins: string[] = [
 ].filter(Boolean);
 
 const corsOptions: CorsOptions = {
-  origin: (
-    origin: string | undefined,
-    callback: (err: Error | null, allow?: boolean) => void
-  ): void => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) {
-      logger.debug('Request with no origin allowed');
-      return callback(null, true);
-    }
-
-    if (allowedOrigins.includes(origin)) {
-      logger.debug('CORS allowed for origin', { origin });
-      return callback(null, true);
-    }
-
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow curl / mobile
+    if (allowedOrigins.includes(origin)) return callback(null, true);
     if (
       !isProduction &&
       /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0):\d+$/.test(origin)
     ) {
-      logger.debug('Development localhost origin allowed', { origin });
       return callback(null, true);
     }
-
-    logger.warn('CORS violation attempt', {
-      origin,
-      userAgent: undefined,
-      timestamp: new Date().toISOString(),
-      allowedOrigins,
-    });
-
+    logger.warn('CORS violation attempt', { origin });
     callback(new Error(`CORS policy violation: Origin ${origin} not allowed`));
   },
   credentials: true,
@@ -151,23 +127,21 @@ const corsOptions: CorsOptions = {
     'Cache-Control',
     'X-CSRF-Token',
   ],
-  // exposedHeaders: ['X-Total-Count', 'X-Page-Count'],
-  // maxAge: isProduction ? 86400 : 300, // 24h in prod, 5min in dev
 };
 
 app.use(cors(corsOptions));
 
 setupSwagger(app);
-
-app.use(httpLogger);
+app.use(requestLogger);
 
 app.get('/', (_req: Request, res: Response) => {
-  res.status(200).send('ok');
+  sendSuccessResponse(res, 200, 'Backend API is running');
 });
 
 app.get('/health', async (_req: Request, res: Response) => {
   try {
     const health = await getHealthStatus();
+    const statusCode = health.status === 'healthy' ? 200 : 503;
 
     const response = {
       name: 'Node.js Backend Service',
@@ -175,34 +149,29 @@ app.get('/health', async (_req: Request, res: Response) => {
       environment: config.NODE_ENV,
       timestamp: new Date().toISOString(),
       health,
-      endpoints: {
-        health: '/health',
-        docs: '/api-docs',
-      },
+      endpoints: { health: '/health', docs: '/api-docs' },
       features: [
         'PostgreSQL Database Integration',
         'Redis Database Integration',
       ],
     };
 
-    // Use 503 if any service is unhealthy
-    const statusCode = health.status === 'healthy' ? 200 : 503;
-
-    sendSuccessResponse(res, statusCode, 'Server is healthy', response);
+    if (statusCode === 200) {
+      sendSuccessResponse(res, statusCode, 'Server is healthy', response);
+    } else {
+      sendErrorResponse(res, statusCode, 'Server is unhealthy', response);
+    }
   } catch (error: any) {
-    console.error('Server health endpoint failed:', error?.message);
-    sendSuccessResponse(res, 500, 'Server is unhealthy', {
+    logger.error('Server health endpoint failed:', error?.message);
+    sendErrorResponse(res, 500, 'Server health check failed', {
       status: 'unhealthy',
-      services: {
-        postgreSQL: 'unknown',
-        redis: 'unknown',
-      },
+      services: { postgreSQL: 'unknown', redis: 'unknown' },
       timestamp: new Date().toISOString(),
     });
   }
 });
 
-app.use('/auth', authRoutes);
+app.use('/auth', authRouter);
 
 // Catch-all 404 handler
 app.get('/{*splat}', (req, res) => {
