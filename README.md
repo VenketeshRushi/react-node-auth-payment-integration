@@ -2,9 +2,9 @@
 
 This is a **full-stack project** with multiple services:
 
-- **Backend:** Node.js + TypeScript
-- **Frontend:** React + Vite
-- **Redis**: In-memory cache
+- **Backend:** Node.js + Express + TypeScript
+- **Frontend:** React + Vite + TypeScript
+- **Redis**: In-memory cache database
 - **PostgreSQL**: Relational database
 
 It uses **Docker and Docker Compose** for both **development** and **production** setups.
@@ -50,19 +50,11 @@ docker run -d --name frontend \
 ```
 
 # Manual Docker Compose Commands
-
-# Validate configuration
-
-docker-compose config
+- **Validate configuration:** docker-compose config
+- **Stop containers:** docker-compose down
 
 # Start Database
+- docker network rm app-network
+- docker network create app-network
+- docker-compose --env-file .env up -d --build
 
-# Create OR Delete shared external network
-
-docker network rm app-network
-docker network create app-network
-docker-compose --env-file .env up -d --build
-
-# Stop containers
-
-docker-compose down
