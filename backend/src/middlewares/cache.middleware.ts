@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { delKey, getKey, setKey } from '../config/redis/redis.utils.js';
-import { logger } from '../utils/logger.js';
 import { sendSuccessResponse } from '../utils/http/responses.utils.js';
+import { logger } from '../config/index.js';
 
 interface CacheOptions {
   prefix: string; // Prefix to group cache keys

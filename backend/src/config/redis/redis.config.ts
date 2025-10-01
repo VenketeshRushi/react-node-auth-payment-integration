@@ -1,4 +1,4 @@
-import { config } from '../config.js';
+import { config } from '../index.js';
 
 export const redisConfig = {
   host: config.REDIS_HOST,

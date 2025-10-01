@@ -1,7 +1,6 @@
 import { pool } from '../../config/database/index.js';
 import { redisClient } from '../../config/redis/client.js';
-import { config } from '../../config/config.js';
-import { logger } from '../logger.js';
+import { config, logger } from '../../config/index.js';
 
 const checkDbConnection = async (): Promise<boolean> => {
   let client;
@@ -41,7 +40,7 @@ const checkDbConnection = async (): Promise<boolean> => {
   } finally {
     // Always release the client back to the pool
     if (client) {
-      logger.info('Releasing PostgreSQL client back to pool');
+      logger.debug('Releasing PostgreSQL client back to pool');
       client.release();
     }
   }

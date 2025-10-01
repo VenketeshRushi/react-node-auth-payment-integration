@@ -2,8 +2,8 @@ import type { Request, Response, NextFunction } from 'express';
 import type { RateLimitOptions } from '../types/rateLimit.types.js';
 import { sendErrorResponse } from '../utils/http/responses.utils.js';
 import { getKey, incrKey, setKey } from '../config/redis/redis.utils.js';
-import { logger } from '../utils/logger.js';
 import { extractIpAddress } from '../utils/http/ip.utils.js';
+import { logger } from '../config/index.js';
 
 /**
  * @description Middleware to enforce API rate limiting per machine/user

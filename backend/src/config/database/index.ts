@@ -1,8 +1,7 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool, DatabaseError } from 'pg';
 import { databaseConfig } from './database.config.js';
-import { config } from '../config.js';
-import { logger } from '../../utils/logger.js';
+import { config, logger } from '../index.js';
 
 // Create the connection pool
 const pool = new Pool(databaseConfig);

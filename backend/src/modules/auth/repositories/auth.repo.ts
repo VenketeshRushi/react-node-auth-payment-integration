@@ -4,9 +4,9 @@ import {
   pipeline,
   setKey,
 } from '../../../config/redis/redis.utils.js';
-import { logger } from '../../../utils/logger.js';
 import { APIError } from '../../../utils/apiError.js';
 import { VerificationType, TempUserData } from '../../../types/auth.types.js';
+import { logger } from '../../../config/index.js';
 
 /**
  * Store machine ID in Redis

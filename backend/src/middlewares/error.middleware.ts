@@ -1,7 +1,6 @@
 import type { ErrorRequestHandler } from 'express';
 import { APIError } from '../utils/apiError.js';
-import { config } from '../config/config.js';
-import { logger } from '../utils/logger.js';
+import { config, logger } from '../config/index.js';
 import { sendErrorResponse } from '../utils/http/responses.utils.js';
 
 /**

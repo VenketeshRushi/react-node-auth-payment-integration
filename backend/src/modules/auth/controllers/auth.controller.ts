@@ -15,7 +15,6 @@ import {
   VerifyOTPResponse,
 } from '../../../types/auth.types.js';
 import { ApiResponse } from '../../../types/api.types.js';
-import { logger } from '../../../utils/logger.js';
 import {
   generateOTP,
   generateUUID,
@@ -43,6 +42,7 @@ import {
   createUser,
 } from '../../users/repositories/user.repo.js';
 import { CreateUserData } from '../../../types/user.types.js';
+import { logger } from '../../../config/index.js';
 
 export const AUTH_CONFIG = {
   TEMP_USER_TTL: 15 * 60, // 15 minutes

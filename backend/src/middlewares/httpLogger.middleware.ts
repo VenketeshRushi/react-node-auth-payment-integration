@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
-import { logger } from '../utils/logger.js';
 import { extractIpAddress } from '../utils/http/ip.utils.js';
 import { parseUserAgent } from '../utils/http/request.utils.js';
+import { logger } from '../config/index.js';
 
 /**
  * HTTP Logger Middleware

@@ -47,7 +47,7 @@ psql -h host.docker.internal -U user -d db
 - **Version:** 15-alpine
 - **Port:** 5432 (configurable via `DB_PORT`)
 - **Database:** `auth_db` (configurable via `DB_NAME`)
-- **Extensions:** uuid-ossp, pgcrypto, btree_gist
+- **Extensions:** uuid-ossp
 
 ### Redis
 

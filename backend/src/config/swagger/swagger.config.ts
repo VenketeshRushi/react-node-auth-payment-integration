@@ -3,8 +3,7 @@ import type { Options } from 'swagger-jsdoc';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { serve, setup } from 'swagger-ui-express';
 import path from 'path';
-import { config } from '../../config/config.js';
-import { logger } from '../../utils/logger.js';
+import { config, logger } from '../index.js';
 
 const swaggerConfig: Options = {
   definition: {

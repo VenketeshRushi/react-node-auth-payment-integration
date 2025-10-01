@@ -1,6 +1,6 @@
 import { Pipeline } from 'ioredis';
 import { redisClient } from './client.js';
-import { logger } from '../../utils/logger.js';
+import { logger } from '../index.js';
 
 /**
  * Get value by key
