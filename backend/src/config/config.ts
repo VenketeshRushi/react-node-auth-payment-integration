@@ -20,7 +20,7 @@ if (result.error) {
 }
 
 const loadedVars = Object.keys(result.parsed || {}).length;
-console.log(`✅ Environment loaded: ${loadedVars} variables from ${envFile}`);
+console.log(`Environment loaded: ${loadedVars} variables from ${envFile}`);
 
 export const config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
@@ -47,7 +47,7 @@ export const config = {
   REDIS_KEY_PREFIX: process.env.REDIS_KEY_PREFIX || 'app:',
 
   JWT_SECRET: process.env.JWT_SECRET!,
-  JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
+  JWT_ACCESS_EXPIRES_IN: Number(process.env.JWT_ACCESS_EXPIRES_IN) || 3600, // 1hr
   JWT_ISSUER: process.env.JWT_ISSUER || 'auth-service',
   JWT_AUDIENCE: process.env.JWT_AUDIENCE || 'auth-clients',
 

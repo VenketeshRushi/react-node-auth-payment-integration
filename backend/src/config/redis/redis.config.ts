@@ -1,12 +1,14 @@
+import { config } from '../config.js';
+
 export const redisConfig = {
-  host: process.env.REDIS_HOST || 'localhost',
-  port: Number(process.env.REDIS_PORT) || 6379,
-  db: Number(process.env.REDIS_DB) || 0,
-  password: process.env.REDIS_PASSWORD || 'redis123',
+  host: config.REDIS_HOST,
+  port: config.REDIS_PORT,
+  db: config.REDIS_DB,
+  password: config.REDIS_PASSWORD,
   lazyConnect: true,
   keepAlive: 30000,
   family: 4,
-  keyPrefix: process.env.REDIS_KEY_PREFIX || 'app:',
+  keyPrefix: config.REDIS_KEY_PREFIX,
   retryDelayOnFailover: 100,
   maxRetriesPerRequest: 3,
   maxLoadingTimeout: 10000,

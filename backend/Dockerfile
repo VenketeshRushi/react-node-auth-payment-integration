@@ -4,15 +4,23 @@
 FROM node:22-alpine AS base
 WORKDIR /usr/src/app
 
-RUN apk add --no-cache python3 make g++ bash curl
+# Install build dependencies
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    bash \
+    curl
 
 # ==========================
 # Stage 2: Dependencies
 # ==========================
 FROM base AS deps
-COPY package*.json tsconfig*.json ./
+COPY package*.json ./
 RUN npm install -g npm@11.5.2
-RUN npm ci
+RUN npm ci --only=production && \
+    cp -R node_modules /tmp/prod_node_modules && \
+    npm ci
 
 # ==========================
 # Stage 3: Build
@@ -27,29 +35,41 @@ RUN npm run build
 FROM node:22-alpine AS prod
 WORKDIR /usr/src/app
 
+# Create non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# Install curl for healthcheck
-RUN apk add --no-cache curl
+# Install runtime dependencies only
+RUN apk add --no-cache curl dumb-init
 
-# Copy package.json for prod deps
-COPY package*.json ./
+# Copy production node_modules from deps stage
+COPY --from=deps /tmp/prod_node_modules ./node_modules
 
-# Install only production deps
-RUN npm install -g npm@11.5.2 && npm ci --omit=dev --no-optional
-
-# Copy built files
+# Copy built application
 COPY --from=build /usr/src/app/dist ./dist
 
-RUN chown -R appuser:appgroup /usr/src/app
+# Copy package.json for version info (optional)
+COPY --from=build /usr/src/app/package*.json ./
+
+# Create logs directory with proper permissions
+RUN mkdir -p logs && \
+    chown -R appuser:appgroup /usr/src/app
+
+# Switch to non-root user
 USER appuser
 
+# Environment variables
 ENV NODE_ENV=production
 ENV PORT=5000
+ENV HOST=0.0.0.0
 
 EXPOSE 5000
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=5 \
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:5000/health || exit 1
 
-CMD ["npm", "run", "start:production"]
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start application directly with node (faster than npm)
+CMD ["node", "dist/server.js"]

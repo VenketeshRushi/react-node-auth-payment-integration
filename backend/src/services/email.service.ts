@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { config } from '../config/config.js';
 import { APIError } from '../utils/apiError.js';
 import { logger } from '../utils/logger.js';
 
@@ -24,33 +25,30 @@ let transporter: ReturnType<typeof nodemailer.createTransport>;
 const getTransporter = (): ReturnType<typeof nodemailer.createTransport> => {
   if (transporter) return transporter;
 
-  const config: EmailConfig = {
-    host: process.env.SMTP_HOST!,
-    port: Number(process.env.SMTP_PORT) || 465,
-    secure: true, // true for 465, false for 587
+  const emailConfig: EmailConfig = {
+    host: config.SMTP_HOST,
+    port: config.SMTP_PORT,
+    secure: config.SMTP_PORT === 465, // true for 465, false for other ports
     auth: {
-      user: process.env.SMTP_USER!,
-      pass: process.env.SMTP_PASS!,
+      user: config.SMTP_USER,
+      pass: config.SMTP_PASS,
     },
   };
 
-  if (!config.host || !config.auth.user || !config.auth.pass) {
+  if (!emailConfig.host || !emailConfig.auth.user || !emailConfig.auth.pass) {
     throw new APIError('Email configuration is incomplete', 500);
   }
 
-  transporter = nodemailer.createTransport(config);
+  transporter = nodemailer.createTransport(emailConfig);
   return transporter;
 };
 
-/**
- * Send a single email
- */
 export const sendEmail = async (options: EmailOptions) => {
   try {
     const transporter = getTransporter();
 
     const mailOptions = {
-      from: `"${process.env.FROM_NAME}" <${process.env.FROM_EMAIL}>`,
+      from: `"${config.FROM_NAME}" <${config.FROM_EMAIL}>`,
       to: options.to,
       subject: options.subject,
       html: options.html,
@@ -76,9 +74,6 @@ export const sendEmail = async (options: EmailOptions) => {
   }
 };
 
-/**
- * Send bulk emails concurrently
- */
 export const sendBulkEmail = async (emails: EmailOptions[]) => {
   const results = await Promise.allSettled(
     emails.map(email => sendEmail(email))

@@ -1,6 +1,7 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool, DatabaseError } from 'pg';
 import { databaseConfig } from './database.config.js';
+import { config } from '../config.js';
 import { logger } from '../../utils/logger.js';
 
 // Create the connection pool
@@ -24,7 +25,7 @@ pool.on('error', (err: Error, _client) => {
   logger.error('PostgreSQL pool error', {
     message: dbError.message,
     code: dbError.code,
-    stack: process.env.NODE_ENV === 'development' ? dbError.stack : undefined,
+    stack: config.NODE_ENV === 'development' ? dbError.stack : undefined,
   });
 });
 
@@ -72,7 +73,7 @@ process.on('SIGINT', shutdownPool);
 process.on('SIGTERM', shutdownPool);
 
 const db = drizzle(pool, {
-  logger: process.env.NODE_ENV === 'development',
+  logger: config.NODE_ENV === 'development',
 });
 
 export { pool, db, testPoolConnection };

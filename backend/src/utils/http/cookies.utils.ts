@@ -1,4 +1,5 @@
 import type { CookieOptions, Response } from 'express';
+import { config } from '../../config/config.js';
 
 export const setCookie = (
   res: Response,
@@ -8,8 +9,8 @@ export const setCookie = (
 ): void => {
   const defaultOptions: CookieOptions = {
     httpOnly: name === 'refreshToken' ? true : false,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: (process.env.NODE_ENV === 'production' ? 'strict' : 'lax') as
+    secure: config.NODE_ENV === 'production',
+    sameSite: (config.NODE_ENV === 'production' ? 'strict' : 'lax') as
       | boolean
       | 'lax'
       | 'strict'
@@ -24,15 +25,14 @@ export const setCookie = (
 export const clearAllCookies = (res: Response): void => {
   const cookieBaseOptions: CookieOptions = {
     path: '/',
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: (process.env.NODE_ENV === 'production' ? 'strict' : 'lax') as
+    secure: config.NODE_ENV === 'production',
+    sameSite: (config.NODE_ENV === 'production' ? 'strict' : 'lax') as
       | boolean
       | 'lax'
       | 'strict'
       | 'none',
   };
 
-  // Clear with both httpOnly true and false to ensure complete cleanup
   const cookiesToClear = ['accessToken', 'refreshToken', 'user'];
 
   cookiesToClear.forEach(cookieName => {

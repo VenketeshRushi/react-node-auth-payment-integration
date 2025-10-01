@@ -1,10 +1,12 @@
 import bcrypt from 'bcrypt';
 import { logger } from '../logger.js';
+import { config } from '../../config/config.js';
+
+const BCRYPT_SALT_ROUNDS = 12;
 
 export const hashPassword = async (password: string): Promise<string> => {
   try {
-    const saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS || 12);
-    const salt = await bcrypt.genSalt(saltRounds);
+    const salt = await bcrypt.genSalt(BCRYPT_SALT_ROUNDS);
     return await bcrypt.hash(password, salt);
   } catch (error) {
     logger.error('Password hashing failed:', error);
