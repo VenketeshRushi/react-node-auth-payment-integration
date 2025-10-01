@@ -32,20 +32,6 @@ project-root/
     └── .env.production      # Frontend-specific env vars
 
 
-# Manual Docker Compose Commands
-
-# Validate configuration
-docker-compose config
-
-# Start Database
-# Create OR Delete shared external network
-docker network rm app-network
-docker network create app-network
-docker-compose --env-file .env up -d --build
-
-# Stop containers
-docker-compose down
-
 # Pull images
 docker pull node-backend:latest
 docker pull react-frontend:latest
@@ -62,3 +48,21 @@ docker run -d --name frontend \
   -p 80:80 \
   react-frontend:latest
 ```
+
+# Manual Docker Compose Commands
+
+# Validate configuration
+
+docker-compose config
+
+# Start Database
+
+# Create OR Delete shared external network
+
+docker network rm app-network
+docker network create app-network
+docker-compose --env-file .env up -d --build
+
+# Stop containers
+
+docker-compose down
