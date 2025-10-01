@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool, DatabaseError } from 'pg';
+import { Pool, PoolClient, DatabaseError } from 'pg';
 import { databaseConfig } from './database.config.js';
 import { config, logger } from '../index.js';
 
@@ -7,19 +7,19 @@ import { config, logger } from '../index.js';
 const pool = new Pool(databaseConfig);
 
 // Pool event handlers
-pool.on('connect', _client => {
+pool.on('connect', (_client: PoolClient) => {
   logger.info('PostgreSQL client connected to pool');
 });
 
-pool.on('acquire', _client => {
+pool.on('acquire', (_client: PoolClient) => {
   logger.debug('PostgreSQL client acquired from pool');
 });
 
-pool.on('remove', _client => {
+pool.on('remove', (_client: PoolClient) => {
   logger.debug('PostgreSQL client removed from pool');
 });
 
-pool.on('error', (err: Error, _client) => {
+pool.on('error', (err: Error, _client: PoolClient) => {
   const dbError = err as DatabaseError;
   logger.error('PostgreSQL pool error', {
     message: dbError.message,
@@ -28,42 +28,15 @@ pool.on('error', (err: Error, _client) => {
   });
 });
 
-// Test the pool connection on startup
-const testPoolConnection = async () => {
-  try {
-    logger.info('Testing PostgreSQL pool connection...');
-    const client = await pool.connect();
-    const result = await client.query(
-      'SELECT NOW() as time, current_database() as db, current_user as user'
-    );
-    logger.info('PostgreSQL pool connection test successful', {
-      time: result.rows[0].time,
-      database: result.rows[0].db,
-      user: result.rows[0].user,
-    });
-    client.release();
-    return true;
-  } catch (error) {
-    const dbError = error as DatabaseError;
-    logger.error('PostgreSQL pool connection test failed', {
-      message: dbError.message,
-      code: dbError.code,
-      hint: (dbError as any).hint,
-    });
-    return false;
-  }
-};
-
-const shutdownPool = async () => {
+const shutdownPool = async (): Promise<void> => {
   try {
     logger.info('Closing PostgreSQL pool...');
     await pool.end();
     logger.info('PostgreSQL pool closed successfully');
     process.exit(0);
   } catch (error) {
-    logger.error('Error closing PostgreSQL pool', {
-      message: (error as Error).message,
-    });
+    const e = error as Error;
+    logger.error('Error closing PostgreSQL pool', { message: e.message });
     process.exit(1);
   }
 };
@@ -75,4 +48,4 @@ const db = drizzle(pool, {
   logger: config.NODE_ENV === 'development',
 });
 
-export { pool, db, testPoolConnection };
+export { pool, db };
