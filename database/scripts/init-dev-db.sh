@@ -6,12 +6,12 @@ echo "🚀 Running Postgres initialization script..."
 # ----------------------------
 # Use environment variables from docker-compose
 # ----------------------------
-POSTGRES_USER="${POSTGRES_USER:-postgres}"
-POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-postgres}"
+POSTGRES_USER="${POSTGRES_USER}"
+POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
 
-DB_USER="${DB_USER:-devuser}"
-DB_PASSWORD="${DB_PASSWORD:-devpass123}"
-DB_NAME="${DB_NAME:-auth_db}"
+DB_USER="${DB_USER}"
+DB_PASSWORD="${DB_PASSWORD}"
+DB_NAME="${DB_NAME}"
 
 export PGPASSWORD="$POSTGRES_PASSWORD"
 

@@ -42,9 +42,9 @@ services:
       POSTGRES_USER: ${POSTGRES_SUPERUSER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_SUPERUSER_PASSWORD:-postgres}
       # Application database credentials (passed to init script)
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER:-devuser}
+      DB_PASSWORD: ${DB_PASSWORD:-devpass123}
+      DB_NAME: ${DB_NAME:-auth_db}
       PGDATA: /var/lib/postgresql/data/pgdata
       # Performance and locale settings
       POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.utf8"
