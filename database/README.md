@@ -261,7 +261,3 @@ docker exec postgres-dev cat /var/lib/postgresql/data/pgdata/pg_log/postgresql-*
 2. Test with `docker-compose up`
 3. Update documentation if needed
 4. Submit pull request
-
-## 📄 License
-
-[Your License Here]
