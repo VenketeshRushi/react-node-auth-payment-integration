@@ -14,14 +14,14 @@ export const databaseConfig: PoolConfig = {
   connectionTimeoutMillis: 5_000, // Increased from 2s to 5s
 
   // SSL config (disable in dev, enable in prod)
-  ssl:
-    config.NODE_ENV === 'production'
-      ? { rejectUnauthorized: false }
-      : undefined, // use undefined instead of false for PoolConfig type safety
+  // ssl:
+  //   config.NODE_ENV === 'production'
+  //     ? { rejectUnauthorized: false }
+  //     : undefined, // use undefined instead of false for PoolConfig type safety
 
-  application_name: 'backend',
+  // application_name: 'backend',
 
-  // These are passed via `SET` after connection
-  statement_timeout: 10_000, // 10 seconds
-  query_timeout: 10_000, // 10 seconds
+  // // These are passed via `SET` after connection
+  // statement_timeout: 10_000, // 10 seconds
+  // query_timeout: 10_000, // 10 seconds
 };

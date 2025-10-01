@@ -6,23 +6,13 @@ const { PORT, NODE_ENV, HOST } = config;
 
 const connectToServices = async (): Promise<boolean> => {
   const maxRetries = 5;
-  const retryDelay = 3000;
-  const connectionTimeout = 10000;
+  const retryDelay = 3000; // 3s per attempt
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     logger.info(`Connecting to services... (${attempt}/${maxRetries})`);
 
     try {
-      const connectionPromise = checkAllConnections();
-      const timeoutPromise = new Promise<Record<string, boolean>>((_, reject) =>
-        setTimeout(
-          () => reject(new Error('Connection timeout')),
-          connectionTimeout
-        )
-      );
-
-      const result = await Promise.race([connectionPromise, timeoutPromise]);
-
+      const result = await checkAllConnections();
       const failedServices = Object.entries(result)
         .filter(([_, ok]) => !ok)
         .map(([name]) => name);
@@ -33,9 +23,10 @@ const connectToServices = async (): Promise<boolean> => {
       } else {
         logger.error(`❌ Failed to connect: ${failedServices.join(', ')}`);
       }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      logger.error(`❌ Attempt ${attempt} failed: ${message}`);
+    } catch (error: any) {
+      logger.error(
+        `❌ Attempt ${attempt} failed: ${error?.message || 'Unknown error'}`
+      );
     }
 
     if (attempt < maxRetries) {
@@ -71,10 +62,10 @@ const startServer = async () => {
   server.timeout = 30000;
 
   const shutdown = (signal: string) => {
-    logger.warn(`⚠️  ${signal} received - shutting down gracefully...`);
-    server.close(err => {
+    logger.warn(`⚠️ ${signal} received - shutting down gracefully...`);
+    server.close((err: Error | undefined) => {
       if (err) {
-        logger.error('❌ Error during shutdown:', { error: err });
+        logger.error('❌ Error during shutdown', { error: err });
         process.exit(1);
       }
       logger.info('✅ Server closed successfully');
@@ -82,37 +73,31 @@ const startServer = async () => {
     });
 
     setTimeout(() => {
-      logger.error('⏱️  Force shutdown due to timeout');
+      logger.error('⏱️ Force shutdown due to timeout');
       process.exit(1);
     }, 10000);
   };
 
   process.on('SIGINT', () => shutdown('SIGINT'));
   process.on('SIGTERM', () => shutdown('SIGTERM'));
-
-  process.on('unhandledRejection', (reason, promise) => {
-    logger.error('❌ Unhandled Rejection at:', { promise, reason });
-    if (NODE_ENV !== 'production') process.exit(1);
-  });
-
-  process.on('uncaughtException', err => {
-    logger.error('❌ Uncaught Exception:', { error: err });
-    process.exit(1);
-  });
-
-  process.on('warning', warning => {
-    logger.warn('⚠️  Process warning:', {
+  process.on('unhandledRejection', (reason, promise) =>
+    logger.error('❌ Unhandled Rejection', { promise, reason })
+  );
+  process.on('uncaughtException', err =>
+    logger.error('❌ Uncaught Exception', { error: err })
+  );
+  process.on('warning', warning =>
+    logger.warn('⚠️ Process warning', {
       name: warning.name,
       message: warning.message,
-    });
-  });
+    })
+  );
 
-  // Startup summary
   logger.info('═══════════════════════════════════════');
   logger.info('🚀 Backend Server Starting...');
   logger.info('═══════════════════════════════════════');
   logger.info(`📅 Started at: ${new Date().toISOString()}`);
-  logger.info(`⚙️  Node.js version: ${process.version}`);
+  logger.info(`⚙️ Node.js version: ${process.version}`);
   logger.info(`📁 Working directory: ${process.cwd()}`);
   logger.info(`🌍 Environment: ${NODE_ENV}`);
   logger.info('═══════════════════════════════════════\n');

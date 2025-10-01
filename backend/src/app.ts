@@ -122,7 +122,6 @@ const corsOptions: CorsOptions = {
       return callback(null, true);
     }
 
-    // Allow localhost in development
     if (
       !isProduction &&
       /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0):\d+$/.test(origin)
@@ -133,7 +132,7 @@ const corsOptions: CorsOptions = {
 
     logger.warn('CORS violation attempt', {
       origin,
-      userAgent: undefined, // Will be filled by middleware if available
+      userAgent: undefined,
       timestamp: new Date().toISOString(),
       allowedOrigins,
     });
@@ -146,7 +145,7 @@ const corsOptions: CorsOptions = {
     'Content-Type',
     'Authorization',
     'X-Requested-With',
-    'x-machine-id',
+    'x-Machine-Id',
     'Accept',
     'Origin',
     'Cache-Control',
@@ -171,7 +170,7 @@ app.get('/health', async (_req: Request, res: Response) => {
     const health = await getHealthStatus();
 
     const response = {
-      name: 'Genie Backend Service',
+      name: 'Node.js Backend Service',
       message: 'Backend APIs is running now 👍',
       environment: config.NODE_ENV,
       timestamp: new Date().toISOString(),
@@ -203,7 +202,7 @@ app.get('/health', async (_req: Request, res: Response) => {
   }
 });
 
-app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 
 // Catch-all 404 handler
 app.get('/{*splat}', (req, res) => {
