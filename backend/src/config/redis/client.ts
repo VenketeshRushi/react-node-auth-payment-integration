@@ -24,7 +24,6 @@ redisClient.on('reconnecting', (delay: number, attempt: number) => {
   logger.warn(`Redis reconnecting in ${delay}ms (attempt ${attempt})`);
 });
 
-// Graceful shutdown
 const shutdownRedis = async () => {
   logger.info('Closing Redis connection...');
   await redisClient.quit();

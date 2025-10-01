@@ -16,9 +16,9 @@ interface SMSConfig {
 
 const getSMSConfig = (): SMSConfig => {
   const config = {
-    accountSid: process.env.TWILIO_ACCOUNT_SID!,
-    authToken: process.env.TWILIO_AUTH_TOKEN!,
-    fromPhone: process.env.TWILIO_PHONE_NUMBER!,
+    accountSid: process.env.TWILIO_ACCOUNT_SID || '',
+    authToken: process.env.TWILIO_AUTH_TOKEN || '',
+    fromPhone: process.env.TWILIO_PHONE_NUMBER || '',
   };
 
   if (!config.accountSid || !config.authToken || !config.fromPhone) {
@@ -28,20 +28,23 @@ const getSMSConfig = (): SMSConfig => {
   return config;
 };
 
-// Create Twilio client singleton
-const client = (() => {
-  const config = getSMSConfig();
-  return twilio(config.accountSid, config.authToken);
-})();
+// Lazy initialization - don't create client until first use
+let client: ReturnType<typeof twilio> | null = null;
 
-/**
- * Send a single SMS
- */
+const getClient = () => {
+  if (!client) {
+    const config = getSMSConfig();
+    client = twilio(config.accountSid, config.authToken);
+  }
+  return client;
+};
+
 export const sendSMS = async (options: SMSOptions) => {
   try {
     const config = getSMSConfig();
+    const twilioClient = getClient();
 
-    const message = await client.messages.create({
+    const message = await twilioClient.messages.create({
       body: options.message,
       from: config.fromPhone,
       to: formatPhoneNumber(options.to),
@@ -64,9 +67,6 @@ export const sendSMS = async (options: SMSOptions) => {
   }
 };
 
-/**
- * Send multiple SMS messages concurrently
- */
 export const sendBulkSMS = async (messages: SMSOptions[]) => {
   const results = await Promise.allSettled(messages.map(sms => sendSMS(sms)));
 

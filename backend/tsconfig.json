@@ -45,7 +45,8 @@
     "src/**/*.js",
     "server.ts",
     "server.js",
-    "drizzle.config.ts"
+    "drizzle.config.ts",
+    "env.ts"
   ],
 
   /* ===== Excluded Files ===== */
