@@ -17,6 +17,7 @@ const logColors = {
   http: 'magenta',
   debug: 'blue',
 };
+
 winston.addColors(logColors);
 
 // Daily Rotate File transports
@@ -47,7 +48,7 @@ const accessTransport = new winston.transports.DailyRotateFile({
 });
 
 export const logger = winston.createLogger({
-  level: config.LOG_LEVEL, // use configured log level (defaults to 'info')
+  level: config.LOG_LEVEL || 'debug', // use configured log level (defaults to 'info')
   levels: logLevels,
   format: winston.format.combine(
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),

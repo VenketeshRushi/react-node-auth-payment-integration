@@ -1,26 +1,27 @@
-import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import { logger } from '../utils/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const envFile =
-  process.env.NODE_ENV === 'production'
-    ? '.env.production'
-    : '.env.development';
-
-const result = dotenv.config({
-  path: path.resolve(__dirname, `../../${envFile}`),
-});
-
-if (result.error) {
-  console.error('Error loading .env file:', result.error.message);
-  process.exit(1);
+if (process.env.NODE_ENV !== 'production') {
+  const result = dotenv.config({
+    path: path.resolve(__dirname, '../../.env.development'),
+  });
+  if (result.error) {
+    logger.error('Error loading .env.development:', result.error.message);
+    process.exit(1);
+  }
+  logger.info(
+    `Loaded ${Object.keys(result.parsed || {}).length} variables from .env.development`
+  );
+} else {
+  logger.info(
+    'Production mode: environment variables are injected via Docker or cloud platform'
+  );
 }
-
-const loadedVars = Object.keys(result.parsed || {}).length;
-console.log(`Environment loaded: ${loadedVars} variables from ${envFile}`);
 
 export const config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
@@ -47,7 +48,7 @@ export const config = {
   REDIS_KEY_PREFIX: process.env.REDIS_KEY_PREFIX || 'app:',
 
   JWT_SECRET: process.env.JWT_SECRET!,
-  JWT_ACCESS_EXPIRES_IN: Number(process.env.JWT_ACCESS_EXPIRES_IN) || 3600, // 1hr
+  JWT_ACCESS_EXPIRES_IN: Number(process.env.JWT_ACCESS_EXPIRES_IN) || 3600,
   JWT_ISSUER: process.env.JWT_ISSUER || 'auth-service',
   JWT_AUDIENCE: process.env.JWT_AUDIENCE || 'auth-clients',
 
