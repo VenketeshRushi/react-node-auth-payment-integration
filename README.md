@@ -50,11 +50,13 @@ docker run -d --name frontend \
 ```
 
 # Manual Docker Compose Commands
+
 - **Validate configuration:** docker-compose config
+- **Start containers:** docker-compose up -d
 - **Stop containers:** docker-compose down
 
 # Start Database
+
 - docker network rm app-network
 - docker network create app-network
 - docker-compose --env-file .env up -d --build
-
