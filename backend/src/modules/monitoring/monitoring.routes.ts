@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { notificationQueue } from '@/services/notifications/index.js';
 import { BullMQNotificationQueue } from '@/services/notifications/queues/bullmq.queue.js';
+import { sendSuccessResponse, sendErrorResponse } from '@/utils/http.js';
 
 const router = Router();
 
@@ -10,10 +11,7 @@ const checkQueue = (
   res: Response
 ): queue is BullMQNotificationQueue => {
   if (!queue) {
-    res.status(503).json({
-      success: false,
-      message: 'Notification queue not initialized',
-    });
+    sendErrorResponse(res, 503, 'Notification queue not initialized');
     return false;
   }
   return true;
@@ -29,47 +27,42 @@ interface QueueMetrics {
   [key: string]: number;
 }
 
-router.get('/queue/metrics', async (_req: Request, res: Response) => {
+router.get('/metrics', async (_req: Request, res: Response) => {
   if (!checkQueue(notificationQueue, res)) return;
 
   try {
     const metrics: QueueMetrics = await notificationQueue.getQueueMetrics();
 
-    res.json({
-      success: true,
-      data: {
-        queue: 'notifications',
-        metrics,
-        timestamp: new Date().toISOString(),
-      },
+    sendSuccessResponse(res, 200, 'Queue metrics fetched successfully', {
+      queue: 'notifications',
+      metrics,
+      timestamp: new Date().toISOString(),
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch queue metrics',
+    sendErrorResponse(res, 500, 'Failed to fetch queue metrics', {
       error: err.message,
     });
   }
 });
 
-router.get('/queue/health', async (_req: Request, res: Response) => {
+router.get('/health', async (_req: Request, res: Response) => {
   if (!checkQueue(notificationQueue, res)) return;
 
   try {
     const metrics: QueueMetrics = await notificationQueue.getQueueMetrics();
     const isHealthy = metrics.failed < 100 && metrics.waiting < 1000;
 
-    res.status(isHealthy ? 200 : 503).json({
-      success: isHealthy,
-      data: {
+    sendSuccessResponse(
+      res,
+      isHealthy ? 200 : 503,
+      `Queue is ${isHealthy ? 'healthy' : 'degraded'}`,
+      {
         status: isHealthy ? 'healthy' : 'degraded',
         metrics,
-      },
-    });
+      }
+    );
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch queue health',
+    sendErrorResponse(res, 500, 'Failed to fetch queue health', {
       error: err.message,
     });
   }

@@ -9,11 +9,19 @@ export function MachineIdProvider({ children }: { children: React.ReactNode }) {
     if (hasFetched.current) return;
     hasFetched.current = true;
 
-    authAxios
-      .get('/auth/machine-id')
-      .then(
-        res => res.data.data?.id && setCookies({ machineId: res.data.data.id })
-      );
+    const fetchMachineId = async () => {
+      try {
+        const res = await authAxios.get('/auth/machine-id');
+        const machineId = res.data?.data?.machineId;
+        if (machineId) {
+          setCookies({ machineId });
+        }
+      } catch (err) {
+        console.error('Failed to fetch machine ID', err);
+      }
+    };
+
+    fetchMachineId();
   }, []);
 
   return <>{children}</>;
