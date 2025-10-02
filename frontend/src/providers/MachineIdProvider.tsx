@@ -12,7 +12,9 @@ export function MachineIdProvider({ children }: { children: React.ReactNode }) {
     authAxios
       .get('/auth/machine-id')
       .then(
-        res => res.data.data?.id && setCookies({ machineId: res.data.data.id })
+        res =>
+          res.data.data?.machineId &&
+          setCookies({ machineId: res.data.data.machineId })
       );
   }, []);
 
