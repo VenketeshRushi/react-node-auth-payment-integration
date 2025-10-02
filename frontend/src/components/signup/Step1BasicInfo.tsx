@@ -158,6 +158,7 @@ export default function Step1BasicInfo({
               id='password'
               type={showPassword ? 'text' : 'password'}
               placeholder='••••••••'
+              autoComplete='current-password'
               value={formData.password}
               onChange={e => onFieldChange('password', e.target.value)}
               className={cn(
@@ -197,6 +198,7 @@ export default function Step1BasicInfo({
               id='confirmPassword'
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder='••••••••'
+              autoComplete='new-password'
               value={formData.confirmPassword}
               onChange={e => onFieldChange('confirmPassword', e.target.value)}
               className={cn(
