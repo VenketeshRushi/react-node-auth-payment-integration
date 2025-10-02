@@ -1,26 +1,7 @@
-import { pool } from '@/services/database/client.js';
+import { pool } from '@/services/database/connection.js';
+import { checkDbConnection } from '@/services/database/utils/health.js';
 import { redisClient } from '@/services/redis/client.js';
-
-export const checkDbConnection = async (): Promise<boolean> => {
-  let client;
-  try {
-    client = await pool.connect();
-    await client.query('SELECT 1'); // simple ping
-    return true;
-  } catch {
-    return false;
-  } finally {
-    if (client) client.release();
-  }
-};
-
-export const checkRedisConnection = async (): Promise<boolean> => {
-  try {
-    return (await redisClient.ping()) === 'PONG';
-  } catch {
-    return false;
-  }
-};
+import { checkRedisConnection } from '@/services/redis/health.js';
 
 export const checkAllConnections = async (): Promise<{
   database: boolean;

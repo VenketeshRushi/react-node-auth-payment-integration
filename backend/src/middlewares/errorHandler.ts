@@ -1,7 +1,7 @@
 import type { ErrorRequestHandler } from 'express';
 import { APIError } from '../utils/apiError.js';
 import { config } from '@/config/loadEnv.js';
-import { sendErrorResponse } from '@/utils/response.utils.js';
+import { sendErrorResponse } from '@/utils/http.js';
 import { logger } from '@/config/logger/index.js';
 
 /**

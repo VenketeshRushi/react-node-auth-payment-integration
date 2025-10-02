@@ -1,6 +1,6 @@
 import { logger } from '@/config/logger/index.js';
-import { db } from '@/services/database/client.js';
 import type { NodePgTransaction } from 'drizzle-orm/node-postgres';
+import { db } from '../connection.js';
 
 export const withTransaction = async <T>(
   callback: (tx: NodePgTransaction<any, any>) => Promise<T>

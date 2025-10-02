@@ -1,8 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import {
-  sendErrorResponse,
-  sendSuccessResponse,
-} from '@/utils/response.utils.js';
+import { sendErrorResponse, sendSuccessResponse } from '@/utils/http.js';
 import {
   GetMachineIdResponse,
   RegisterTempUserParams,
@@ -14,7 +11,7 @@ import {
   VerifyOTPRequest,
   VerifyOTPResponse,
 } from '@/types/auth.types.js';
-import { generateOTP, generateUUID } from '@/utils/crypto.utils.js';
+import { generateOTP, generateUUID } from '@/utils/crypto.js';
 import {
   checkMachineIdExists,
   clearRegistrationData,
@@ -26,17 +23,17 @@ import {
   deleteTempUser,
   getOTP,
   deleteOTP,
-} from './auth.repo.js';
-import { ApiResponse } from '@/types/response.js';
+} from './auth.repository.js';
+import { ApiResponse } from '@/types/api.response.js';
 import { logger } from '@/config/logger/index.js';
-import { checkUserExists, createUser } from '../user/user.repo.js';
+import { checkUserExists, createUser } from '../user/user.repository.js';
 import { APIError } from '@/utils/apiError.js';
-import { hashPassword } from '@/utils/password.utils.js';
+import { hashPassword } from '@/utils/auth.utils.js';
+import { CreateUserData } from '@/types/user.types.js';
 import {
   sendResendNotifications,
   sendVerificationNotifications,
-} from '@/utils/sendNotification.js';
-import { CreateUserData } from '@/types/user.types.js';
+} from '@/services/notifications/notification.helper.js';
 
 export const AUTH_CONFIG = {
   TEMP_USER_TTL: 15 * 60, // 15 minutes
