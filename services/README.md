@@ -1,4 +1,3 @@
-````markdown
 ## Commands
 
 1. **Create or Delete the network:**
@@ -7,7 +6,6 @@
 docker network rm app-network || true
 docker network create app-network
 ```
-````
 
 2. **Start services:**
 
@@ -61,4 +59,8 @@ Open in browser: [http://localhost:3001](http://localhost:3001)
 
 ```bash
 curl http://localhost:3000/api/monitoring/queue/metrics
+```
+
+```
+
 ```

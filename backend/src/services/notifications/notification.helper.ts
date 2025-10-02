@@ -96,19 +96,3 @@ export const sendWelcomeEmail = async (
     html: template.html(name),
   });
 };
-
-export const sendPasswordResetEmail = async (
-  email: string,
-  name: string,
-  resetToken: string,
-  resetUrl: string
-): Promise<void> => {
-  const template = getEmailTemplate('password-reset');
-
-  await notificationService.send({
-    channel: NotificationChannel.EMAIL,
-    to: email,
-    subject: template.subject,
-    html: template.html(name, resetUrl, resetToken),
-  });
-};
