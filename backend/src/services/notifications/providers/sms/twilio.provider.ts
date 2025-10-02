@@ -33,7 +33,12 @@ export class TwilioSMSProvider implements ISMSProvider {
   async sendSMS(options: SMSOptions): Promise<SMSResult> {
     try {
       const twilioClient = this.getClient();
+
+      // Ensure `to` is defined
       const toNumber = Array.isArray(options.to) ? options.to[0] : options.to;
+      if (!toNumber) {
+        throw new APIError('Recipient phone number is missing', 400);
+      }
 
       const message = await twilioClient.messages.create({
         body: options.message,

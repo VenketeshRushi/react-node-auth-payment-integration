@@ -4,8 +4,9 @@ This is a **full-stack project** with multiple services:
 
 - **Backend:** Node.js + Express + TypeScript
 - **Frontend:** React + Vite + TypeScript
-- **Redis**: In-memory cache database
+- **Redis**: In-memory cache database 
 - **PostgreSQL**: Relational database
+- **BullMQ**: Queue system for handling notifications and background jobs
 
 It uses **Docker and Docker Compose** for both **development** and **production** setups.
 
@@ -18,9 +19,9 @@ project-root/
 │
 ├── docker-compose.yml
 │
-├── database/
+├── services/
 │   ├── docker-compose.yml
-│   └── .env      # databse-specific env vars
+│   └── .env      # services-specific env vars
 │
 ├── backend/
 │   ├── Dockerfile
@@ -55,8 +56,7 @@ docker run -d --name frontend \
 - **Start containers:** docker-compose up -d
 - **Stop containers:** docker-compose down
 
-# Start Database
+# Start Services
 
-- docker network rm app-network
 - docker network create app-network
 - docker-compose --env-file .env up -d --build

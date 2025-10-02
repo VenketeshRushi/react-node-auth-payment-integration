@@ -1,4 +1,4 @@
-import { EmailTemplate } from '@/types/emailTemplate.js';
+import { EmailTemplate } from '../email-provider.interface.js';
 import { baseStyles } from './baseStyles.js';
 
 export const sessionExpiryTemplate: EmailTemplate = {
