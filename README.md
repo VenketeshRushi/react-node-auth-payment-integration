@@ -4,7 +4,7 @@ This is a **full-stack project** with multiple services:
 
 - **Backend:** Node.js + Express + TypeScript
 - **Frontend:** React + Vite + TypeScript
-- **Redis**: In-memory cache database 
+- **Redis**: In-memory cache database
 - **PostgreSQL**: Relational database
 - **BullMQ**: Queue system for handling notifications and background jobs
 
@@ -50,7 +50,7 @@ docker run -d --name frontend \
   react-frontend:latest
 ```
 
-# Manual Docker Compose Commands
+# Docker Compose Commands
 
 - **Validate configuration:** docker-compose config
 - **Start containers:** docker-compose up -d
