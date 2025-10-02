@@ -9,24 +9,27 @@ import { logger } from './config/logger/index.js';
 import { config } from './config/loadEnv.js';
 import { setupSwagger } from './config/swagger/swagger.config.js';
 import { requestLogger } from './middlewares/requestLogger.js';
-import { getHealthStatus } from './utils/healthCheck.js';
-import { sendSuccessResponse, sendErrorResponse } from './utils/http.js';
 import { errorHandlerMiddleware } from './middlewares/errorHandler.js';
+import { sendSuccessResponse, sendErrorResponse } from './utils/http.js';
+import { getHealthStatus } from './utils/healthCheck.js';
 import authRouter from './modules/auth/auth.route.js';
+import queueMonitoringRouter from './modules/monitoring/monitoring.routes.js';
+import { notificationQueue } from './services/notifications/index.js';
 
 const app = express();
 
+// Ensure logs directory exists
 const logsDir = path.join(process.cwd(), 'logs');
 if (!fs.existsSync(logsDir)) {
   fs.mkdirSync(logsDir, { recursive: true });
   logger.info('Created logs directory', { path: logsDir });
 }
 
-// Trust proxy for load balancers / reverse proxies
+// Trust proxy for load balancers
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
 
-// Response compression
+// Compression
 app.use(
   compression({
     level: 6,
@@ -38,37 +41,30 @@ app.use(
   })
 );
 
-// Helmet for security
+// Helmet security
 const isProduction = config.NODE_ENV === 'production';
-
-if (isProduction) {
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          scriptSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
-          connectSrc: ["'self'", config.FRONTEND_URL, 'wss:'],
-          fontSrc: ["'self'", 'https:', 'data:'],
-          objectSrc: ["'none'"],
-          frameSrc: ["'none'"],
-        },
-      },
-      crossOriginEmbedderPolicy: false,
-      hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
-    })
-  );
-} else {
-  app.use(
-    helmet({
-      contentSecurityPolicy: false,
-      crossOriginEmbedderPolicy: false,
-      hsts: false,
-    })
-  );
-}
+app.use(
+  helmet({
+    contentSecurityPolicy: isProduction
+      ? {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", 'data:', 'https:'],
+            connectSrc: ["'self'", config.FRONTEND_URL, 'wss:'],
+            fontSrc: ["'self'", 'https:', 'data:'],
+            objectSrc: ["'none'"],
+            frameSrc: ["'none'"],
+          },
+        }
+      : false,
+    crossOriginEmbedderPolicy: false,
+    hsts: isProduction
+      ? { maxAge: 31536000, includeSubDomains: true, preload: true }
+      : false,
+  })
+);
 
 // Body parsing
 app.use(
@@ -79,7 +75,6 @@ app.use(
     },
   })
 );
-
 app.use(
   express.urlencoded({
     extended: true,
@@ -101,7 +96,7 @@ const allowedOrigins: string[] = [
 
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // allow curl / mobile
+    if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
     if (
       !isProduction &&
@@ -138,37 +133,78 @@ app.get('/', (_req: Request, res: Response) => {
 app.get('/health', async (_req: Request, res: Response) => {
   try {
     const health = await getHealthStatus();
-    const statusCode = health.status === 'healthy' ? 200 : 503;
+
+    let queueStatus = {
+      status: 'unknown',
+      metrics: null as null | Record<string, number>,
+    };
+
+    if (notificationQueue) {
+      try {
+        const metrics = await notificationQueue.getQueueMetrics();
+        const isHealthy = metrics.failed < 100 && metrics.waiting < 1000;
+        queueStatus = {
+          status: isHealthy ? 'healthy' : 'degraded',
+          metrics,
+        };
+      } catch (err: any) {
+        logger.error(
+          'Failed to fetch notification queue metrics:',
+          err?.message
+        );
+        queueStatus.status = 'unhealthy';
+      }
+    } else {
+      queueStatus.status = 'uninitialized';
+    }
+
+    const servicesStatus = [
+      health.status === 'healthy',
+      queueStatus.status === 'healthy' ||
+        queueStatus.status === 'uninitialized', // treat uninitialized as non-critical
+    ];
+
+    const overallHealthy = servicesStatus.every(Boolean);
+    const statusCode = overallHealthy ? 200 : 503;
 
     const response = {
       name: 'Node.js Backend Service',
-      message: 'Backend APIs is running now 👍',
+      message: 'Backend APIs are running 👍',
       environment: config.NODE_ENV,
       timestamp: new Date().toISOString(),
       health,
+      queue: queueStatus,
       endpoints: { health: '/health', docs: '/api-docs' },
       features: [
         'PostgreSQL Database Integration',
         'Redis Database Integration',
+        'Notification Queue Integration',
       ],
     };
 
-    if (statusCode === 200) {
+    if (overallHealthy) {
       sendSuccessResponse(res, statusCode, 'Server is healthy', response);
     } else {
-      sendErrorResponse(res, statusCode, 'Server is unhealthy', response);
+      sendErrorResponse(
+        res,
+        statusCode,
+        'Server is degraded/unhealthy',
+        response
+      );
     }
   } catch (error: any) {
     logger.error('Server health endpoint failed:', error?.message);
     sendErrorResponse(res, 500, 'Server health check failed', {
       status: 'unhealthy',
-      services: { postgreSQL: 'unknown', redis: 'unknown' },
+      services: { postgreSQL: 'unknown', redis: 'unknown', queue: 'unknown' },
       timestamp: new Date().toISOString(),
     });
   }
 });
 
+// Routers
 app.use('/auth', authRouter);
+app.use('/queue', queueMonitoringRouter);
 
 // Catch-all 404 handler
 app.get('/{*splat}', (req, res) => {
