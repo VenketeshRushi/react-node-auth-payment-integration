@@ -1,8 +1,24 @@
 import type { Request, Response, NextFunction } from 'express';
-import { RateLimitOptions } from '@/types/rateLimit.js';
 import { getKey, incrKey, setKey } from '@/services/redis/utils.js';
-import { sendErrorResponse } from '@/utils/response.utils.js';
+import { sendErrorResponse } from '@/utils/http.js';
 import { logger } from '@/config/logger/index.js';
+
+interface RateLimitOptions {
+  /** Maximum number of requests allowed within the window */
+  limit?: number;
+  /** Time window in seconds */
+  window?: number;
+  /** Redis key prefix for rate limit storage */
+  prefix?: string;
+  /** Header key to extract machine ID from */
+  headerKey?: string;
+  /** Whether to require machine ID or allow fallback to IP */
+  requireMachineId?: boolean;
+  /** Skip rate limiting entirely */
+  bypass?: boolean;
+  /** Fail closed (reject) or fail open (allow) on Redis errors */
+  failClosed?: boolean;
+}
 
 /**
  * @description Middleware to enforce API rate limiting per machine/user

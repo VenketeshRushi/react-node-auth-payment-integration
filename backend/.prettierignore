@@ -7,3 +7,7 @@
 # Include specific backend files
 !server.ts
 !drizzle.config.ts
+
+# Ignore artifacts:
+build
+coverage

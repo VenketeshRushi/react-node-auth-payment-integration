@@ -7,13 +7,10 @@ import compression from 'compression';
 import fs from 'fs';
 import { logger } from './config/logger/index.js';
 import { config } from './config/loadEnv.js';
-import { setupSwagger } from './docs/swagger/swagger.config.js';
+import { setupSwagger } from './config/swagger/swagger.config.js';
 import { requestLogger } from './middlewares/requestLogger.js';
 import { getHealthStatus } from './utils/healthCheck.js';
-import {
-  sendSuccessResponse,
-  sendErrorResponse,
-} from './utils/response.utils.js';
+import { sendSuccessResponse, sendErrorResponse } from './utils/http.js';
 import { errorHandlerMiddleware } from './middlewares/errorHandler.js';
 import authRouter from './modules/auth/auth.route.js';
 

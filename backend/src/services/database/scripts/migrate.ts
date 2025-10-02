@@ -11,23 +11,25 @@ const runMigrations = async () => {
   });
 
   try {
-    console.log('Connecting to PostgreSQL for migrations...');
+    console.log('🔌 Connecting to PostgreSQL for migrations...');
     await client.connect();
+    console.log('✅ Connected successfully');
 
     const db = drizzle(client);
 
-    console.log('Running migrations...');
+    console.log('🚀 Running migrations...');
     await migrate(db, {
-      migrationsFolder: 'src/database/migrations',
+      migrationsFolder: './src/database/migrations',
     });
 
-    console.log('Migrations completed successfully!');
+    console.log('✅ Migrations completed successfully!');
   } catch (error) {
-    console.error('Migration failed:', error);
+    console.error('❌ Migration failed:', error);
     process.exit(1);
   } finally {
-    console.log('Closing PostgreSQL client...');
+    console.log('🔌 Closing PostgreSQL client...');
     await client.end();
+    console.log('✅ Connection closed');
   }
 };
 

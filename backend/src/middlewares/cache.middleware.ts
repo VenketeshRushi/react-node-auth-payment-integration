@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { delKey, getKey, setKey } from '@/services/redis/utils.js';
 import { logger } from '@/config/logger/index.js';
-import { sendSuccessResponse } from '@/utils/response.utils.js';
+import { sendSuccessResponse } from '@/utils/http.js';
 
 interface CacheOptions {
   prefix: string;

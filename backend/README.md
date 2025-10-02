@@ -1,6 +1,8 @@
 # Development
 
-- npm run dev # Run dev server with hot reload
+- npm run dev # start server
+- npm run dev:worker # start worker if not using a container
+
 - npm run db:generate # Generate migrations
 - npm run db:migrate # Run migrations (dev)
 - npm run db:studio # Open Drizzle Studio

@@ -1,6 +1,7 @@
 import app from '@/app.js';
 import { config } from '@/config/loadEnv.js';
 import { checkAllConnections } from '@/utils/healthCheck.js';
+import { startNotificationWorker } from '@/workers/notification.worker.js';
 
 const { PORT, NODE_ENV, HOST } = config;
 
@@ -38,6 +39,10 @@ const startServer = async () => {
 
   const server = app.listen(PORT, HOST, () => {
     console.log(`Server running at http://${HOST}:${PORT} [${NODE_ENV}]`);
+    if (config.USE_QUEUE) {
+      startNotificationWorker();
+      console.info('BullMQ notification worker initialized');
+    }
   });
 
   server.timeout = 30000;

@@ -1,6 +1,5 @@
 import { eq, or } from 'drizzle-orm';
-import { usersTable } from '@/services/database/schema.js';
-import { withTransaction } from '@/utils/dbWithTransaction.js';
+
 import { APIError } from '@/utils/apiError.js';
 import {
   CreateUserData,
@@ -9,6 +8,8 @@ import {
   UserConflictCheck,
 } from '@/types/user.types.js';
 import { logger } from '@/config/logger/index.js';
+import { withTransaction } from '@/services/database/utils/transaction.js';
+import { usersTable } from '@/models/users.model.js';
 
 export const checkUserExists = async ({
   email,

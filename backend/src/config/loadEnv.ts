@@ -55,6 +55,12 @@ export const config = {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET!,
   GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL!,
 
+  USE_QUEUE: process.env.USE_QUEUE === 'true',
+  BULLMQ_BOARD_PORT: Number(process.env.BULLMQ_BOARD_PORT) || 3001,
+  QUEUE_CONCURRENCY: Number(process.env.QUEUE_CONCURRENCY) || 5,
+  QUEUE_MAX_RETRIES: Number(process.env.QUEUE_MAX_RETRIES) || 3,
+  QUEUE_BACKOFF_DELAY: Number(process.env.QUEUE_BACKOFF_DELAY) || 2000,
+
   SMTP_PORT: Number(process.env.SMTP_PORT) || 465,
   SMTP_HOST: process.env.SMTP_HOST!,
   SMTP_USER: process.env.SMTP_USER!,

@@ -9,17 +9,26 @@
     "npm": ">=11.5.2"
   },
   "scripts": {
-    "dev": "node --import=tsx --watch server.ts",
-    "start": "npm run start:production",
+    "dev": "tsx watch server.ts",
+    "dev:worker": "tsx watch src/workers/notification.worker.ts",
+
     "build": "npm run build:production",
     "build:production": "tsc --project tsconfig.json && tsc-alias",
+    "start": "npm run start:production",
     "start:production": "node ./dist/server.js",
+
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "node --import=tsx src/services/database/migrate.ts",
+    "db:migrate": "tsx src/database/scripts/migrate.ts",
+    "db:seed": "tsx src/database/scripts/seed.ts",
+    "db:reset": "tsx src/database/scripts/reset.ts",
+    "db:push": "drizzle-kit push",
+    "db:drop": "drizzle-kit drop",
     "db:studio": "drizzle-kit studio",
+
     "lint": "tsc --noEmit",
     "format": "prettier --write 'src/**/*.{ts,js,json,md}' '*.{ts,js,json,md}'",
     "format:check": "prettier --check 'src/**/*.{ts,js,json,md}' '*.{ts,js,json,md}'",
+
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
     "audit": "npm audit",
@@ -27,6 +36,7 @@
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "bullmq": "^5.59.0",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -68,8 +78,8 @@
     "@types/swagger-ui-express": "^4.1.8",
     "drizzle-kit": "^0.31.4",
     "prettier": "^3.6.2",
-    "tsx": "^4.20.5",
     "tsc-alias": "^1.8.8",
+    "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   }
 }
