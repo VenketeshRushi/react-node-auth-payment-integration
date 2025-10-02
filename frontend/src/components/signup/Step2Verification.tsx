@@ -97,6 +97,7 @@ export default function Step2Verification({
             type='email'
             value={formData.email}
             placeholder='john@gmail.com'
+            autoComplete='username'
             onChange={e => onFieldChange('email', e.target.value)}
             disabled
           />

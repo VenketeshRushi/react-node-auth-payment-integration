@@ -136,6 +136,7 @@ export default function Step1BasicInfo({
             id='email'
             type='email'
             placeholder='john@gmail.com'
+            autoComplete='username'
             value={formData.email}
             onChange={e => onFieldChange('email', e.target.value)}
             className={cn(
